@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home Screen-->
+    <dimen name="homescreen_title_top_spacing">20dp</dimen>
+    <dimen name="homescreen_title_and_button_spacing">50dp</dimen>
+    <dimen name="homescreen_button_spacing">10dp</dimen>
+
+    <!--Login Screen-->
+    <dimen name="login_screen_title_spacing">20dp</dimen>
+    <dimen name="login_screen_text_field_spacing">10dp</dimen>
+
+</resources>

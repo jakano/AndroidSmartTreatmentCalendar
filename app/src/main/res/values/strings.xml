@@ -1,0 +1,26 @@
+<resources>
+
+    <!--Core App-->
+    <string name="app_name">Smart Treatment Calendar</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="intro">Welcome!</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+
+
+
+    <!--Login-->
+    <string name="login_email_example">example@mail.com</string>
+    <string name="login_screen_title">Welcome!</string>
+
+    <!-- Register-->
+    <string name="reg_first_name">First Name</string>
+    <string name="reg_last_name">Last Name</string>
+    <string name="reg_gtid">GTID</string>
+    <string name="reg_confirm_password">Confirm Password</string>
+    <string name="reg_screen_title">Welcome!</string>
+
+
+
+</resources>

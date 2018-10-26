@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HomeScreenActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/homescreen_title_and_button_spacing"
+            android:text="@string/intro"
+            android:textAlignment="center"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/homescreen_login_button"
+            android:layout_marginTop="@dimen/homescreen_title_and_button_spacing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/buzz_blue"
+            android:textColor="@color/white"
+            android:text="@string/login" />
+        <Button
+            android:id="@+id/homescreen_register_button"
+            android:layout_marginTop="@dimen/homescreen_button_spacing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/buzz_blue"
+            android:textColor="@color/white"
+            android:text="@string/register" />
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
