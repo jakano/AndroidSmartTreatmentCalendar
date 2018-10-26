@@ -1,5 +1,6 @@
 package jic8138.jic9138androidsmarttreatmentcalendar;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -40,6 +41,8 @@ public class RegistrationActivity extends AppCompatActivity {
 
     private void onRegisterButtonTap() {
         //TODO: Database implementation
-        this.finish();
+        Intent intent = new Intent(RegistrationActivity.this, LoginActivity.class);
+        finish();
+        startActivity(intent);
     }
 }
