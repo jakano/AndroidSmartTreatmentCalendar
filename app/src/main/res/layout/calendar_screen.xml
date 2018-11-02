@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentBottom="true">
+
+    <FrameLayout
+        android:id="@+id/calendar_view_frame"
+        android:layout_width="wrap_content"
+        android:layout_height="400dp">
+
+    </FrameLayout>
+    <Button
+        android:id="@+id/calendar_add_event_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/buzz_gold"
+        android:textColor="@color/white"
+        android:text="@string/calendar_add_event"
+        />
+
+    <android.support.design.widget.BottomNavigationView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/calendar_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom"
+        app:menu="@menu/navigation"/>
+</LinearLayout>

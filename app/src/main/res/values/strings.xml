@@ -7,7 +7,7 @@
     <string name="intro">Welcome!</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
-
+    <string name="cancel">Cancel</string>
 
 
     <!--Login-->
@@ -21,6 +21,20 @@
     <string name="reg_confirm_password">Confirm Password</string>
     <string name="reg_screen_title">Welcome!</string>
 
+    <!--Calendar-->
+    <string name="calendar_add_event">Add Event</string>
+    <string name="calendar_month">Month</string>
+    <string name="calendar_week">Week</string>
+    <string name="calendar_day">Day</string>
 
+    <!--Event-->
+    <string name="event_name_header">Event Name</string>
+    <string name="event_start_day_header">Start Day</string>
+    <string name="event_end_day_header">End Day</string>
+    <string name="event_start_time_header">Start Time</string>
+    <string name="event_end_time_header">End Time</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

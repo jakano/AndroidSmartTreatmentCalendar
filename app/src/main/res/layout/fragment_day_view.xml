@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".DayViewFragment">
+
+    <com.alamkanak.weekview.WeekView
+        android:id="@+id/calendar_day_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:eventTextColor="@android:color/white"
+        app:textSize="12sp"
+        app:hourHeight="60dp"
+        app:headerColumnPadding="8dp"
+        app:headerColumnTextColor="#8f000000"
+        app:headerRowPadding="12dp"
+        app:columnGap="8dp"
+        app:noOfVisibleDays="1"
+        app:headerRowBackgroundColor="#ffefefef"
+        app:dayBackgroundColor="#05000000"
+        app:todayBackgroundColor="#1848adff"
+        app:headerColumnBackground="#ffffffff"
+        />
+
+</FrameLayout>
