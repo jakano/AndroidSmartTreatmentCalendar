@@ -2,7 +2,7 @@
 <resources>
     <!-- Home Screen-->
     <dimen name="homescreen_title_top_spacing">20dp</dimen>
-    <dimen name="homescreen_title_and_button_spacing">50dp</dimen>
+    <dimen name="homescreen_title_and_button_spacing">20dp</dimen>
     <dimen name="homescreen_button_spacing">10dp</dimen>
 
     <!--Login Screen-->
