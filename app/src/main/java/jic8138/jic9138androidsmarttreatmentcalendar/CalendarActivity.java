@@ -11,6 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import jic8138.jic9138androidsmarttreatmentcalendar.Controllers.Database;
+
 public class CalendarActivity extends AppCompatActivity {
 
     private Button mAddEventButton;
@@ -55,6 +57,8 @@ public class CalendarActivity extends AppCompatActivity {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.calendar_view_frame, MonthViewFragment.newInstance());
         transaction.commit();
+
+        Database.initialize();
 
     }
 
