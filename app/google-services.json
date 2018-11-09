@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "707210951412",
+    "firebase_url": "https://smartwatercalendarjic8138.firebaseio.com",
+    "project_id": "smartwatercalendarjic8138",
+    "storage_bucket": "smartwatercalendarjic8138.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:707210951412:android:8512c3d6916db5c4",
+        "android_client_info": {
+          "package_name": "jic8138.jic9138androidsmarttreatmentcalendar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "707210951412-ljffji9v1t7b3m6eu2nbcutq4qk3oo05.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "jic8138.jic9138androidsmarttreatmentcalendar",
+            "certificate_hash": "945c67da9fa05f87dbdca5cbcef256368f458cc9"
+          }
+        },
+        {
+          "client_id": "707210951412-7l44lvlcc815sg11viqmofftusgfd2hm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_6HyZGo_vgMx7vG2Vw1elvho1RG0hCtA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "707210951412-7l44lvlcc815sg11viqmofftusgfd2hm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
