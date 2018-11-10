@@ -28,7 +28,6 @@ public class User {
         result.put("email", email);
         result.put("first", first);
         result.put("last", last);
-
         return result;
     }
 
