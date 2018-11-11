@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Event {
-
+    private String eventID;
     private String eventName;
     private String eventStartDay;
     private String eventStartTime;
@@ -16,7 +16,8 @@ public class Event {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public Event(String eventName, String eventStartDay, String eventStartTime, String eventEndDay, String eventEndTime) {
+    public Event(String eventID, String eventName, String eventStartDay, String eventStartTime, String eventEndDay, String eventEndTime) {
+        this.eventID = eventID;
         this.eventName = eventName;
         this.eventStartDay = eventStartDay;
         this.eventStartTime = eventStartTime;
@@ -26,6 +27,7 @@ public class Event {
 
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
+        result.put("eventID", eventID);
         result.put("eventName", eventName);
         result.put("eventStartDay", eventStartDay);
         result.put("eventStartTime", eventStartTime);

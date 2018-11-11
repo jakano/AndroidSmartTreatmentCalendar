@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.FirebaseError;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
@@ -46,7 +47,6 @@ public class AddEventDialog extends DialogFragment {
                 .setPositiveButton(R.string.calendar_add_event, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        //TODO: Add to database
                         mEventNameTextField = getDialog().findViewById(R.id.add_event_name_input);
                         mEventStartDayTextField = getDialog().findViewById(R.id.add_event_start_day_input);
                         mEventStartTimeTextField = getDialog().findViewById(R.id.add_event_start_time_input);
@@ -60,18 +60,13 @@ public class AddEventDialog extends DialogFragment {
                         String eventEndTime = mEventEndTimeTextField.getText().toString().trim();
 
                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                        DatabaseReference ref = Database.getReference("events");
-                        Event e = new Event(eventName, eventStartDay, eventStartTime, eventEndDay, eventEndTime);
-                        // TODO: create hash for unique events so that reference is ref.child(user.getUid() / unique event hash id )
-                        ref.child(user.getUid()).setValue(e.toMap());
-                        // supposed to check if the write completes successfully or not, currently crashes the application
-//                        ref.child(user.getUid()).setValue(e.toMap(), new DatabaseReference.CompletionListener() {
-//                            public void onComplete(DatabaseError error, DatabaseReference ref) {
-//                                Toast.makeText(getActivity(), "Error: " + error, Toast.LENGTH_SHORT).show();
-//                            }
-//                        });
+                        // Database ref to events/userID/eventID
+                        DatabaseReference ref = Database.getReference("events").child(user.getUid()).push();
+                        String eventID = ref.getKey();
+                        Event e = new Event(eventID, eventName, eventStartDay, eventStartTime, eventEndDay, eventEndTime);
+                        ref.setValue(e.toMap());
 
-                        Toast.makeText(getActivity(), "successfully added event to database!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Event created!", Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
                     }
                 })
