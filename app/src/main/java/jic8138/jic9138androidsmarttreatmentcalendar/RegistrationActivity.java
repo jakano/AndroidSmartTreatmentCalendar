@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 
 import jic8138.jic9138androidsmarttreatmentcalendar.Controllers.Database;
+import android.text.TextUtils;
 
 public class RegistrationActivity extends AppCompatActivity {
 
@@ -56,52 +57,97 @@ public class RegistrationActivity extends AppCompatActivity {
 
     private void onRegisterButtonTap() {
         //TODO: Database implementation
-        String email = mEmailTextField.getText().toString().trim();
-        String password = mPasswordTextField.getText().toString().trim();
-        String gtid = mGTIDTextField.getText().toString().trim();
-        String first = mFirstNameTextField.getText().toString().trim();
-        String last = mLastnameTextField.getText().toString().trim();
+        mFirstNameTextField = findViewById(R.id.reg_first_name_textfield);
+        mLastnameTextField = findViewById(R.id.reg_last_name_textfield);
+        mEmailTextField = findViewById(R.id.reg_email_textfield);
+        mGTIDTextField = findViewById(R.id.reg_gtid_textfield);
+        mPasswordTextField = findViewById(R.id.reg_password_textfield);
+        mConfirmPasswordTextField = findViewById(R.id.reg_confirm_password_textfield);
 
-        Database.mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        String fn_text = mFirstNameTextField.getText().toString();
+        String ln_text = mLastnameTextField.getText().toString();
+        String em_text = mEmailTextField.getText().toString();
+        String gtid_text = mGTIDTextField.getText().toString();
+        String ps_text = mPasswordTextField.getText().toString();
+        String cps_text = mConfirmPasswordTextField.getText().toString();
+        View focusView = null;
+        if (TextUtils.isEmpty(fn_text)){
+            mFirstNameTextField.setError("You must enter a first name");
+            focusView = mFirstNameTextField;
+            focusView.requestFocus();
+        }
+        if (TextUtils.isEmpty(ln_text)) {
+            mLastnameTextField.setError("You must enter a last name");
+            focusView = mLastnameTextField;
+            focusView.requestFocus();
+        }
+        if (TextUtils.isEmpty(em_text)){
+            mEmailTextField.setError("You must enter an email");
+            focusView = mEmailTextField;
+            focusView.requestFocus();
+        }
+        if (TextUtils.isEmpty(gtid_text)) {
+            mGTIDTextField.setError("You must enter a gtid");
+            focusView = mGTIDTextField;
+            focusView.requestFocus();
+        }
+        if (TextUtils.isEmpty(ps_text)) {
+            mPasswordTextField.setError("You must enter a password");
+            focusView = mPasswordTextField;
+            focusView.requestFocus();
+        }
+        if (TextUtils.isEmpty(cps_text)) {
+            mConfirmPasswordTextField.setError("You must confirm password");
+            focusView = mConfirmPasswordTextField;
+            focusView.requestFocus();
+        } else {
+            String email = mEmailTextField.getText().toString().trim();
+            String password = mPasswordTextField.getText().toString().trim();
+            String gtid = mGTIDTextField.getText().toString().trim();
+            String first = mFirstNameTextField.getText().toString().trim();
+            String last = mLastnameTextField.getText().toString().trim();
 
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                Log.d("Registration", "createUserWithEmail:onComplete:" + task.isSuccessful());
+            Database.mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
 
-                // If sign in fails, display a message to the user. If sign in succeeds
-                // the auth state listener will be notified and logic to handle the
-                // signed in user can be handled in the listener.
-                Toast toast;
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    Log.d("Registration", "createUserWithEmail:onComplete:" + task.isSuccessful());
+
+                    // If sign in fails, display a message to the user. If sign in succeeds
+                    // the auth state listener will be notified and logic to handle the
+                    // signed in user can be handled in the listener.
+                    Toast toast;
 
 
-                if (!task.isSuccessful()) {
-                    toast = Toast.makeText(getApplicationContext(), "Unsuccessful registration ;_;", Toast.LENGTH_SHORT);
-                    try {
-                        throw task.getException();
-                    } catch (FirebaseAuthWeakPasswordException e) {
-                        toast = Toast.makeText(getApplicationContext(), "Your password is too weak!", Toast.LENGTH_SHORT);
-                    } catch (FirebaseAuthUserCollisionException e) {
-                        toast = Toast.makeText(getApplicationContext(), "A user with this email address already exists!", Toast.LENGTH_SHORT);
-                    } catch (Exception e) {
-                        toast = Toast.makeText(getApplicationContext(), "Failed Registration: " + e.getMessage(), Toast.LENGTH_SHORT);
+                    if (!task.isSuccessful()) {
+                        toast = Toast.makeText(getApplicationContext(), "Unsuccessful registration ;_;", Toast.LENGTH_SHORT);
+                        try {
+                            throw task.getException();
+                        } catch (FirebaseAuthWeakPasswordException e) {
+                            toast = Toast.makeText(getApplicationContext(), "Your password is too weak!", Toast.LENGTH_SHORT);
+                        } catch (FirebaseAuthUserCollisionException e) {
+                            toast = Toast.makeText(getApplicationContext(), "A user with this email address already exists!", Toast.LENGTH_SHORT);
+                        } catch (Exception e) {
+                            toast = Toast.makeText(getApplicationContext(), "Failed Registration: " + e.getMessage(), Toast.LENGTH_SHORT);
+                        }
+                        toast.show();
+                    } else {
+                        toast = Toast.makeText(getApplicationContext(),
+                                "Successfully registered account!",
+                                Toast.LENGTH_SHORT);
+                        toast.show();
+
+                        FirebaseUser user = task.getResult().getUser();
+                        DatabaseReference ref = Database.getReference("users");
+                        User u = new User(gtid, email, first, last);
+                        ref.child(user.getUid()).setValue(u.toMap());
+                        // changes to Login page
+                        Intent intent = new Intent(RegistrationActivity.this, LoginActivity.class);
+                        finish();
+                        startActivity(intent);
                     }
-                    toast.show();
-                } else {
-                    toast = Toast.makeText(getApplicationContext(),
-                            "Successfully registered account!",
-                            Toast.LENGTH_SHORT);
-                    toast.show();
-
-                    FirebaseUser user = task.getResult().getUser();
-                    DatabaseReference ref = Database.getReference("users");
-                    User u = new User(gtid, email, first, last);
-                    ref.child(user.getUid()).setValue(u.toMap());
-                    // changes to Login page
-                    Intent intent = new Intent(RegistrationActivity.this, LoginActivity.class);
-                    finish();
-                    startActivity(intent);
                 }
-            }
-        });
+            });
+        }
     }
 }
