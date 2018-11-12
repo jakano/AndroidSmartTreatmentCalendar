@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,7 +10,8 @@
     <FrameLayout
         android:id="@+id/calendar_view_frame"
         android:layout_width="wrap_content"
-        android:layout_height="400dp">
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="@id/calendar_add_event_button">
 
     </FrameLayout>
     <Button
@@ -18,6 +20,7 @@
         android:layout_height="wrap_content"
         android:background="@color/buzz_gold"
         android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@id/calendar_navigation"
         android:text="@string/calendar_add_event"
         />
 
@@ -27,6 +30,10 @@
         android:id="@+id/calendar_navigation"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:layout_gravity="bottom"
+        android:background="@color/buzz_blue"
+        app:itemTextColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:menu="@menu/navigation"/>
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

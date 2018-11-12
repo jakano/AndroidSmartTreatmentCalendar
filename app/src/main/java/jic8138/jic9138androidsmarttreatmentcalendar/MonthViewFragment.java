@@ -9,8 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.applandeo.materialcalendarview.CalendarView;
+import com.applandeo.materialcalendarview.EventDay;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 
 /**
@@ -63,6 +66,16 @@ public class MonthViewFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_month_view, container, false);
         mCalendar = view.findViewById(R.id.calendarView);
+        List<EventDay> events = new ArrayList<>();
+
+        Calendar eventDay = Calendar.getInstance();
+        eventDay.set(Calendar.HOUR_OF_DAY, 3);
+        eventDay.set(Calendar.MINUTE, 0);
+        eventDay.set(Calendar.MONTH, 11);
+        eventDay.set(Calendar.YEAR, 2018);
+        events.add(new EventDay(eventDay, R.drawable.calendar_event_icons));
+
+        mCalendar.setEvents(events);
         return view;
     }
 
