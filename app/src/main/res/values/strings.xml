@@ -33,6 +33,11 @@
     <string name="event_end_day_header">End Day</string>
     <string name="event_start_time_header">Start Time</string>
     <string name="event_end_time_header">End Time</string>
+    <string name="event_type_header">Type</string>
+    <string-array name="event_types">
+        <item>Appointment</item>
+        <item>Sport</item>
+    </string-array>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
