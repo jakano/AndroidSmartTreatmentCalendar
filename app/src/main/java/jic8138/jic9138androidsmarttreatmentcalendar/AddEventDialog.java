@@ -268,15 +268,17 @@ public class AddEventDialog extends DialogFragment {
         String eventStartTime = mEventStartTimeTextField.getText().toString().trim();
         String eventEndDay = mEventEndDayTextField.getText().toString().trim();
         String eventEndTime = mEventEndTimeTextField.getText().toString().trim();
+        String eventType = mEventTypeSpinner.getSelectedItem().toString().trim();
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         // Database ref to events/userID/eventID
         DatabaseReference ref = Database.getReference("events").child(user.getUid()).push();
         String eventID = ref.getKey();
-        Event e = new Event(eventID, eventName, eventStartDay, eventStartTime, eventEndDay, eventEndTime);
+        Event e = new Event(eventID, eventName, eventStartDay, eventStartTime, eventEndDay, eventEndTime, eventType);
         ref.setValue(e.toMap());
 
-        Toast.makeText(getActivity(), "Event created!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), eventType, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getActivity(), "Event created!", Toast.LENGTH_SHORT).show();
         dialog.dismiss();
     }
 }

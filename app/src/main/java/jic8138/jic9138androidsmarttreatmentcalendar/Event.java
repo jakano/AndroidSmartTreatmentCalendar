@@ -11,18 +11,20 @@ public class Event {
     private String eventStartTime;
     private String eventEndDay;
     private String eventEndTime;
+    private String eventType;
 
     public Event() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public Event(String eventID, String eventName, String eventStartDay, String eventStartTime, String eventEndDay, String eventEndTime) {
+    public Event(String eventID, String eventName, String eventStartDay, String eventStartTime, String eventEndDay, String eventEndTime, String eventType) {
         this.eventID = eventID;
         this.eventName = eventName;
         this.eventStartDay = eventStartDay;
         this.eventStartTime = eventStartTime;
         this.eventEndDay = eventEndDay;
         this.eventEndTime = eventEndTime;
+        this.eventType = eventType;
     }
 
     public Map<String, Object> toMap() {
@@ -33,6 +35,7 @@ public class Event {
         result.put("eventStartTime", eventStartTime);
         result.put("eventEndDay", eventEndDay);
         result.put("eventEndTime", eventEndTime);
+        result.put("eventType", eventType);
         return result;
     }
 
