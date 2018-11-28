@@ -29,6 +29,7 @@ import jic8138.jic9138androidsmarttreatmentcalendar.Controllers.Database;
 public class CalendarActivity extends AppCompatActivity {
 
     private Button mAddEventButton;
+    private ArrayList<Event> e = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +94,9 @@ public class CalendarActivity extends AppCompatActivity {
                     // this doesnt work because onDataChange works asynchronously, check saved stackoverflow page for followup
                     //events.add(event);
                     Log.d("EVENTIDS", event.getEventID());
+                    e.add(event);
                 }
+                update();
             }
 
             @Override
@@ -104,6 +107,14 @@ public class CalendarActivity extends AppCompatActivity {
 
         });
 
+        update();
+
+    }
+
+    private void update() {
+        Log.d("EEEE", "" + e.size());
+        // write stuff to display events here, the array list containing all the events is called e
+        // use getters from Event class to retrieve information from each event as string for filtering
     }
 
     private void onAddEventTap() {
