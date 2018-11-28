@@ -32,7 +32,7 @@ public class DayViewFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
+    private ArrayList<Event> mEvents;
     private String mParam2;
 
     private WeekView mOneDayView;
@@ -65,8 +65,7 @@ public class DayViewFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mEvents = getArguments().getParcelableArrayList("Events");
         }
     }
 
@@ -80,23 +79,18 @@ public class DayViewFragment extends Fragment {
             @Override
             public List<WeekViewEvent> onMonthChange(int newYear, int newMonth) {
                 // Populate the week view with some events.
-
-                Calendar startTime = Calendar.getInstance();
-                startTime.set(Calendar.HOUR_OF_DAY, 3);
-                startTime.set(Calendar.MINUTE, 0);
-                startTime.set(Calendar.MONTH, newMonth-1);
-                startTime.set(Calendar.YEAR, newYear);
-
-                Calendar endTime = (Calendar) startTime.clone();
-                endTime.add(Calendar.HOUR, 1);
-                endTime.set(Calendar.MONTH, newMonth-1);
-
-                WeekViewEvent event = new WeekViewEvent(1, "test", startTime, endTime);
-                event.setColor(getResources().getColor(R.color.buzz_gold));
-
-                List<WeekViewEvent> events =new ArrayList<>();
-                events.add(event);
-                return events;
+                ArrayList<WeekViewEvent> weekViewEvents =  new ArrayList<>();
+                for (Event event : mEvents) {
+                    //This method is run for the previous, current, and next month.
+                    // We only want to create WeekViewEvent objects on the current month
+                    int eventStartDateMonth = event.retrieveDateInfo(event.getEventStartDay())[0];
+                    if (eventStartDateMonth == newMonth - 1) {
+                        WeekViewEvent weekViewEvent = event.getWeekViewEvent();
+                        weekViewEvent.setColor(getResources().getColor(R.color.buzz_gold));
+                        weekViewEvents.add(weekViewEvent);
+                    }
+                }
+                return weekViewEvents;
             }
         };
 

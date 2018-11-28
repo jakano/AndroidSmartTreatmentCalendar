@@ -31,7 +31,7 @@ public class MonthViewFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename, change types of, and use parameters
-    private String mParam1;
+    private ArrayList<Event> mEvents;
     private String mParam2;
 
     CalendarView mCalendar;
@@ -55,8 +55,7 @@ public class MonthViewFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mEvents = getArguments().getParcelableArrayList("Events");
         }
     }
 

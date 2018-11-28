@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.alamkanak.weekview.WeekViewEvent;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -49,6 +50,8 @@ public class CalendarActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 Fragment calendar_fragment =  null;
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList("Events", e);
                 switch (menuItem.getItemId()) {
                     case R.id.navigation_month:
                         calendar_fragment = MonthViewFragment.newInstance();
@@ -60,6 +63,7 @@ public class CalendarActivity extends AppCompatActivity {
                         calendar_fragment = DayViewFragment.newInstance();
                         break;
                 }
+                calendar_fragment.setArguments(bundle);
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.calendar_view_frame, calendar_fragment);
                 transaction.commit();
@@ -115,6 +119,8 @@ public class CalendarActivity extends AppCompatActivity {
         Log.d("EEEE", "" + e.size());
         // write stuff to display events here, the array list containing all the events is called e
         // use getters from Event class to retrieve information from each event as string for filtering
+
+
     }
 
     private void onAddEventTap() {
