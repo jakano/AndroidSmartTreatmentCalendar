@@ -23,6 +23,7 @@
 
     <!--Calendar-->
     <string name="calendar_add_event">Add Event</string>
+    <string name="calendar_update_event">Update Event</string>
     <string name="calendar_month">Month</string>
     <string name="calendar_week">Week</string>
     <string name="calendar_day">Day</string>

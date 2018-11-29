@@ -1,6 +1,7 @@
 package jic8138.jic9138androidsmarttreatmentcalendar;
 
 import android.content.Intent;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -61,12 +62,12 @@ public class DetailedEventActivity extends AppCompatActivity {
     }
 
     private void onUpdateTap() {
-        //TODO: Add update button logic
+        DialogFragment updateEventDialog = UpdateEventDialog.newInstance(mEvent);
+        updateEventDialog.show(getSupportFragmentManager(), "Update Event");
     }
 
     private void onDeletTap() {
-        //TODO: Add update button logic
-
+        //TODO: Add Delete Event database logic
     }
 
     private void onDismissTap() {
