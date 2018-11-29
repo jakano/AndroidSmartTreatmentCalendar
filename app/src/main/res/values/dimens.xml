@@ -14,6 +14,10 @@
     <dimen name="medium_text_size">17sp</dimen>
     <dimen name="large_text_size">20sp</dimen>
 
+    <!--Event List-->
+    <dimen name="event_list_row_margins">10dp</dimen>
+
+
     <!--Detailed Event-->
     <dimen name="detailed_event_date_side_margins">5dp</dimen>
     <dimen name="detailed_event_info_top_and_bottom_margins">15dp</dimen>

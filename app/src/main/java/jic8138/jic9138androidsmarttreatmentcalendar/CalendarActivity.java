@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.alamkanak.weekview.WeekViewEvent;
@@ -32,11 +33,15 @@ public class CalendarActivity extends AppCompatActivity {
 
     private FloatingActionButton mAddEventButton;
     private ArrayList<Event> e = new ArrayList<>();
+    private ListView mEventsListView;
+    private EventsListAdapter mEventsListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.calendar_screen);
+        mEventsListView = findViewById(R.id.calendar_event_list);
+
 
         mAddEventButton = findViewById(R.id.calendar_floating_add_button);
         mAddEventButton.setOnClickListener(new View.OnClickListener() {
@@ -46,7 +51,8 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
         BottomNavigationView bottomNavigationView = findViewById(R.id.calendar_navigation);
-
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("Events", e);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -73,8 +79,10 @@ public class CalendarActivity extends AppCompatActivity {
         });
 
         //Manually displaying the first fragment - one time only
+        Fragment calendar_fragment =  MonthViewFragment.newInstance();
+        calendar_fragment.setArguments(bundle);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.calendar_view_frame, MonthViewFragment.newInstance());
+        transaction.replace(R.id.calendar_view_frame, calendar_fragment);
         transaction.commit();
 
 

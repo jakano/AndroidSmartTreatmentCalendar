@@ -1,15 +1,20 @@
 package jic8138.jic9138androidsmarttreatmentcalendar;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.applandeo.materialcalendarview.CalendarView;
 import com.applandeo.materialcalendarview.EventDay;
+import com.applandeo.materialcalendarview.listeners.OnDayClickListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,16 +30,14 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class MonthViewFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename, change types of, and use parameters
     private ArrayList<Event> mEvents;
-    private String mParam2;
 
-    CalendarView mCalendar;
+    private CalendarView mCalendar;
+    private ListView mEventsListView;
+    private EventsListAdapter mEventsListAdapter;
+    private TextView mEmptyListTextView;
+
     private OnFragmentInteractionListener mListener;
 
     public MonthViewFragment() {
@@ -44,10 +47,6 @@ public class MonthViewFragment extends Fragment {
 
     public static MonthViewFragment newInstance() {
         MonthViewFragment fragment = new MonthViewFragment();
-        /*Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);*/
         return fragment;
     }
 
@@ -65,24 +64,73 @@ public class MonthViewFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_month_view, container, false);
         mCalendar = view.findViewById(R.id.calendarView);
+        mEventsListView = view.findViewById(R.id.calendar_event_list);
+        mEventsListView.setVisibility(View.VISIBLE);
+        mEmptyListTextView = view.findViewById(R.id.calendar_no_events);
         List<EventDay> events = new ArrayList<>();
 
-        Calendar eventDay = Calendar.getInstance();
-        eventDay.set(Calendar.HOUR_OF_DAY, 3);
-        eventDay.set(Calendar.MINUTE, 0);
-        eventDay.set(Calendar.MONTH, 11);
-        eventDay.set(Calendar.YEAR, 2018);
-        events.add(new EventDay(eventDay, R.drawable.calendar_event_icons));
+        for (Event event : mEvents) {
+            events.add(new EventDay(event.getCalendarEvent(), R.drawable.calendar_event_icons));
+        }
 
+        //Set Events of Calendar
         mCalendar.setEvents(events);
+
+        //If the current day of the calendar is already set to a day with events, show list.
+        int firstDay = mCalendar.getFirstSelectedDate().get(Calendar.DAY_OF_MONTH);;
+        updateEventList(firstDay);
+
+        mCalendar.setOnDayClickListener(new OnDayClickListener() {
+            @Override
+            public void onDayClick(EventDay eventDay) {
+                int day = eventDay.getCalendar().get(Calendar.DAY_OF_MONTH);
+
+                updateEventList(day);
+            }
+        });
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+    /**
+     * Updates the List of Events with Events on a current day
+     * @param day of which the Events are searched for.
+     */
+    private void updateEventList(int day) {
+        ArrayList<Event> eventsOnDay = getEventsOnDay(day);
+
+        //Display Events in a  list associated with the selected day
+        if(mEventsListAdapter == null) {
+            mEventsListAdapter = new EventsListAdapter(getContext(), eventsOnDay);
+        } else {
+            mEventsListAdapter.setEvents(eventsOnDay);
         }
+        mEventsListView.setAdapter(mEventsListAdapter);
+        shouldShowEmptyListTextViey(eventsOnDay.size());
+    }
+
+    /**
+     * Search through all Events to find the Events of a specific day
+     * @param day , the day of the events being searched for.
+     * @return An ArrayList containing the events on a specific day
+     */
+    private ArrayList<Event> getEventsOnDay(int day) {
+        ArrayList<Event> eventsOnDay = new ArrayList<>();
+        for (Event event : mEvents) {
+            int eventDay = event.retrieveDateInfo(event.getEventStartDay())[1];
+            if(eventDay == day) {
+                eventsOnDay.add(event);
+            }
+        }
+        return eventsOnDay;
+    }
+
+    /**
+     * Hide the EventListView if there are no events. Show a message stating there are no evets
+     * @param size, the size of the list of available events.
+     */
+    private void shouldShowEmptyListTextViey(int size) {
+        mEmptyListTextView.setVisibility( size == 0? View.VISIBLE : View.GONE);
+        mEventsListView.setVisibility( size != 0? View.VISIBLE : View.GONE);
     }
 
     /**

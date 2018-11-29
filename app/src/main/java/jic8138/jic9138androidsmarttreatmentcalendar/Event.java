@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.alamkanak.weekview.WeekViewEvent;
+import com.applandeo.materialcalendarview.EventDay;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -162,5 +163,19 @@ public class Event implements Parcelable{
         endTime.set(Calendar.YEAR, endDateInfo[2]);
 
         return new WeekViewEvent(6, eventName, startTime, endTime);
+    }
+
+    public Calendar getCalendarEvent() {
+        int startDateInfo[] = retrieveDateInfo(eventStartDay);
+        int startTimeInfo[] = retrieveTimeInfo(eventStartTime);
+
+        Calendar calendarEvent = Calendar.getInstance();
+        calendarEvent.set(Calendar.HOUR_OF_DAY, startTimeInfo[0]);
+        calendarEvent.set(Calendar.MINUTE, startTimeInfo[1]);
+        calendarEvent.set(Calendar.DAY_OF_MONTH, startDateInfo[1]);
+        calendarEvent.set(Calendar.MONTH, startDateInfo[0]);
+        calendarEvent.set(Calendar.YEAR, startDateInfo[2]);
+
+        return calendarEvent;
     }
 }

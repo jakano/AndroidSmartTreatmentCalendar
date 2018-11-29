@@ -34,6 +34,7 @@
     <string name="event_start_time_header">Start Time</string>
     <string name="event_end_time_header">End Time</string>
     <string name="event_type_header">Type</string>
+    <string name="event_empty_list">No Events Available for Display</string>
     <string-array name="event_types">
         <item>Appointment</item>
         <item>Sport</item>
@@ -45,10 +46,6 @@
     <string name="detailed_event_dismiss_button">Dismiss</string>
     <string name="detailed_event_from">From:</string>
     <string name="detailed_event_to">To:</string>
-
-
-
-
 
 
     <!-- TODO: Remove or change this placeholder text -->

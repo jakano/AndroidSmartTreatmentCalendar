@@ -11,9 +11,10 @@
         android:id="@+id/calendar_view_frame"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="@id/calendar_navigation">
+        app:layout_constraintBottom_toTopOf="@id/calendar_navigation">
 
     </FrameLayout>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/calendar_floating_add_button"
         android:layout_width="wrap_content"
