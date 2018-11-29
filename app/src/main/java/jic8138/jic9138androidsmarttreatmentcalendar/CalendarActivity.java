@@ -2,6 +2,7 @@ package jic8138.jic9138androidsmarttreatmentcalendar;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -29,7 +30,7 @@ import jic8138.jic9138androidsmarttreatmentcalendar.Controllers.Database;
 
 public class CalendarActivity extends AppCompatActivity {
 
-    private Button mAddEventButton;
+    private FloatingActionButton mAddEventButton;
     private ArrayList<Event> e = new ArrayList<>();
 
     @Override
@@ -37,7 +38,7 @@ public class CalendarActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.calendar_screen);
 
-        mAddEventButton = findViewById(R.id.calendar_add_event_button);
+        mAddEventButton = findViewById(R.id.calendar_floating_add_button);
         mAddEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

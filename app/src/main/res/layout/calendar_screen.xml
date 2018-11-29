@@ -11,25 +11,25 @@
         android:id="@+id/calendar_view_frame"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="@id/calendar_add_event_button">
+        app:layout_constraintTop_toTopOf="@id/calendar_navigation">
 
     </FrameLayout>
-    <Button
-        android:id="@+id/calendar_add_event_button"
-        android:layout_width="match_parent"
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/calendar_floating_add_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/buzz_gold"
-        android:textColor="@color/white"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toTopOf="@id/calendar_navigation"
-        android:text="@string/calendar_add_event"
-        />
+        android:src="@drawable/ic_add_white_24dp"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp" />
 
     <android.support.design.widget.BottomNavigationView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/calendar_navigation"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="@color/buzz_blue"
         app:itemTextColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
