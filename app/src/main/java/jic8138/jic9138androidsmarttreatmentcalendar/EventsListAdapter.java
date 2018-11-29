@@ -30,34 +30,38 @@ public class EventsListAdapter extends ArrayAdapter<Event> {
     public void setEvents(ArrayList<Event> newEvents) {
         mEvents = newEvents;
     }
-    //TODO: Use the Holder Pattern
+
+    private static class ViewHolder {
+        TextView title;
+        TextView times;
+
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
-        View view = convertView;
-        if(view == null) {
-            view = LayoutInflater.from(mContext).inflate(R.layout.events_list_row, parent, false);
+        ViewHolder viewHolder;
+        if (convertView == null) {
+            viewHolder = new ViewHolder();
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            convertView = inflater.inflate(R.layout.events_list_row, parent, false);
+            viewHolder.title = convertView.findViewById(R.id.events_list_title);
+            viewHolder.times = convertView.findViewById(R.id.events_list_time_range);
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
         }
-        if(mEvents.size() != 0) {
+        if(mEvents.size() != 0 && position < mEvents.size()) {
             Event currentEvent = mEvents.get(position);
+            viewHolder.title.setText(currentEvent.getEventName());
 
-            TextView title = view.findViewById(R.id.events_list_title);
-            TextView times = view.findViewById(R.id.events_list_time_range);
-
-            title.setText(currentEvent.getEventName());
-            String time_range = String.format("From %s to %s", currentEvent.getEventStartTime(), currentEvent.getEventEndTime());
-            times.setText(time_range);
-
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    goToDetailedEventActivity(currentEvent);
-                }
-            });
+            String time_range = String.format(
+                    "From %s to %s",
+                    currentEvent.getEventStartTime(),
+                    currentEvent.getEventEndTime());
+            viewHolder.times.setText(time_range);
         }
+        return convertView;
 
-
-        return view;
     }
 
     private void goToDetailedEventActivity(Event event) {

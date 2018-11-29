@@ -193,7 +193,6 @@ public class AddEventDialog extends DialogFragment {
                             String auxillary = "AM";
 
                             if (selectedHour > 12) {
-                                selectedHour = selectedHour - 12;
                                 auxillary = "PM";
                             }
 
@@ -235,7 +234,6 @@ public class AddEventDialog extends DialogFragment {
                             String auxillary = "AM";
 
                             if (selectedHour > 12) {
-                                selectedHour = selectedHour - 12;
                                 auxillary = "PM";
                             }
 
