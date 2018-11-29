@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DetailedEventActivity"
+    android:id="@+id/detailed_event_constraint_layout">
+
+    <LinearLayout
+        android:id="@+id/detailed_event_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="20dp">
+
+        <TextView
+            android:id="@+id/detailed_event_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/large_text_size"
+            android:textStyle="bold"
+            android:gravity="center"
+            />
+
+        <TextView
+            android:id="@+id/detailed_event_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textStyle="italic"
+            android:layout_marginRight="@dimen/detailed_event_date_side_margins"
+            android:layout_marginLeft="@dimen/detailed_event_date_side_margins"
+            android:textSize="@dimen/medium_text_size"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/detailed_event_info_top_and_bottom_margins">
+
+            <TextView
+                android:id="@+id/detailed_event_from"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/detailed_event_from"
+                android:textSize="@dimen/large_text_size"
+                android:layout_marginRight="@dimen/detailed_event_date_side_margins"
+                android:layout_marginLeft="@dimen/detailed_event_date_side_margins"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/detailed_event_start_date"
+                android:layout_width="0dp"
+                android:layout_marginRight="@dimen/detailed_event_date_side_margins"
+                android:layout_marginLeft="@dimen/detailed_event_date_side_margins"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/medium_text_size"
+                android:gravity="end"
+                android:layout_weight="2"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/detailed_event_info_top_and_bottom_margins">
+            <TextView
+                android:id="@+id/detailed_event_to"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginRight="@dimen/detailed_event_date_side_margins"
+                android:layout_marginLeft="@dimen/detailed_event_date_side_margins"
+                android:text="@string/detailed_event_to"
+                android:textSize="@dimen/large_text_size"/>
+
+            <TextView
+                android:id="@+id/detailed_event_end_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_marginRight="@dimen/detailed_event_date_side_margins"
+                android:layout_marginLeft="@dimen/detailed_event_date_side_margins"
+                android:gravity="end"
+                android:textSize="@dimen/medium_text_size"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/homescreen_title_and_button_spacing"
+        app:layout_constraintBottom_toBottomOf="@id/detailed_event_constraint_layout"
+        android:gravity="bottom">
+        <Button
+            android:id="@+id/detailed_event_update_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/detailed_event_update_button"
+            android:textColor="@color/white"
+            android:background="@color/buzz_blue"/>
+
+        <Button
+            android:id="@+id/detailed_event_delete_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/detailed_event_delete_button"
+            android:textColor="@color/white"
+            android:background="@color/dark_red"/>
+
+        <Button
+            android:id="@+id/detailed_event_dismiss_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/detailed_event_dismiss_button"
+            android:textColor="@color/white"
+            android:background="@color/tech_gold"/>
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

@@ -39,6 +39,18 @@
         <item>Sport</item>
     </string-array>
 
+    <!--DetailedEvent-->
+    <string name="detailed_event_update_button">Update</string>
+    <string name="detailed_event_delete_button">Delete</string>
+    <string name="detailed_event_dismiss_button">Dismiss</string>
+    <string name="detailed_event_from">From:</string>
+    <string name="detailed_event_to">To:</string>
+
+
+
+
+
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

@@ -1,6 +1,8 @@
 package jic8138.jic9138androidsmarttreatmentcalendar;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -80,13 +82,18 @@ public class DayViewFragment extends Fragment {
             public List<WeekViewEvent> onMonthChange(int newYear, int newMonth) {
                 // Populate the week view with some events.
                 ArrayList<WeekViewEvent> weekViewEvents =  new ArrayList<>();
-                for (Event event : mEvents) {
+                for (int i = 0; i < mEvents.size(); i++) {
+
+                    Event currentEvent = mEvents.get(i);
+                    long weekDayEventID = (long)i;
+
                     //This method is run for the previous, current, and next month.
                     // We only want to create WeekViewEvent objects on the current month
-                    int eventStartDateMonth = event.retrieveDateInfo(event.getEventStartDay())[0];
+                    int eventStartDateMonth = currentEvent.retrieveDateInfo(currentEvent.getEventStartDay())[0];
                     if (eventStartDateMonth == newMonth - 1) {
-                        WeekViewEvent weekViewEvent = event.getWeekViewEvent();
+                        WeekViewEvent weekViewEvent = currentEvent.getWeekViewEvent();
                         weekViewEvent.setColor(getResources().getColor(R.color.buzz_gold));
+                        weekViewEvent.setId(weekDayEventID);
                         weekViewEvents.add(weekViewEvent);
                     }
                 }
@@ -96,14 +103,21 @@ public class DayViewFragment extends Fragment {
 
         mOneDayView = view.findViewById(R.id.calendar_day_view);
         mOneDayView.setMonthChangeListener(monthChangeListener);
+        mOneDayView.setOnEventClickListener(new WeekView.EventClickListener() {
+            @Override
+            public void onEventClick(WeekViewEvent event, RectF eventRect) {
+                int eventPos = (int)event.getId();
+                Event tappedEvent = mEvents.get(eventPos);
+                goToDetailedEventActivity(tappedEvent);
+            }
+        });
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+    private void goToDetailedEventActivity(Event event) {
+        Intent intent = new Intent(getActivity(), DetailedEventActivity.class);
+        intent.putExtra("event", event);
+        startActivity(intent);
     }
 
     @Override
