@@ -55,9 +55,8 @@ public class MonthViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mEvents = Database.getEvents();
-        }
+        mEvents = Database.getEvents();
+
     }
 
     @Override
@@ -103,10 +102,11 @@ public class MonthViewFragment extends Fragment {
         //Display Events in a  list associated with the selected day
         if(mEventsListAdapter == null) {
             mEventsListAdapter = new EventsListAdapter(getContext(), eventsOnDay);
+            mEventsListView.setAdapter(mEventsListAdapter);
+
         } else {
             mEventsListAdapter.setEvents(eventsOnDay);
         }
-        mEventsListView.setAdapter(mEventsListAdapter);
         shouldShowEmptyListTextViey(eventsOnDay.size());
     }
 
@@ -131,8 +131,8 @@ public class MonthViewFragment extends Fragment {
      * @param size, the size of the list of available events.
      */
     private void shouldShowEmptyListTextViey(int size) {
-        mEmptyListTextView.setVisibility( size == 0? View.VISIBLE : View.GONE);
-        //mEventsListView.setVisibility( size != 0? View.VISIBLE : View.GONE);
+        mEmptyListTextView.setVisibility(size == 0? View.VISIBLE : View.GONE);
+        mEventsListView.setVisibility( size != 0? View.VISIBLE : View.GONE);
     }
 
     /**

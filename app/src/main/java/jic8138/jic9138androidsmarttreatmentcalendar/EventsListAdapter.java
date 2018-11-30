@@ -29,6 +29,7 @@ public class EventsListAdapter extends ArrayAdapter<Event> {
 
     public void setEvents(ArrayList<Event> newEvents) {
         mEvents = newEvents;
+        notifyDataSetChanged();
     }
 
     private static class ViewHolder {

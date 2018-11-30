@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import jic8138.jic9138androidsmarttreatmentcalendar.Controllers.Database;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,30 +47,16 @@ public class DayViewFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment DayViewFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static DayViewFragment newInstance() {
-        DayViewFragment fragment = new DayViewFragment();
-        /*Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);*/
-        return fragment;
+        return new DayViewFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mEvents = getArguments().getParcelableArrayList("Events");
-        }
+        mEvents = Database.getEvents();
+
     }
 
     @Override
