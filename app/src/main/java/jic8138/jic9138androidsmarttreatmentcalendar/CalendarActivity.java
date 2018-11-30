@@ -91,7 +91,8 @@ public class CalendarActivity extends AppCompatActivity {
         ((AddEventDialog) addEventDialog).setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                sendBroadcast(new Intent(UPDATE_EVENT));            }
+                sendBroadcast(new Intent(UPDATE_EVENT));
+            }
         });
         addEventDialog.show(getSupportFragmentManager(), "Add Event");
 

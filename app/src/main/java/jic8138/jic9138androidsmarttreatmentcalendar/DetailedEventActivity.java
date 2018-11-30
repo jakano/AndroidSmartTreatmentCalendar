@@ -1,5 +1,6 @@
 package jic8138.jic9138androidsmarttreatmentcalendar;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +22,8 @@ import java.util.ArrayList;
 import jic8138.jic9138androidsmarttreatmentcalendar.Controllers.Database;
 
 public class DetailedEventActivity extends AppCompatActivity {
+
+    private final static String UPDATE_EVENT = "update_events";
 
     TextView mTitleTextView;
     TextView mStartDateTextView;
@@ -61,7 +64,7 @@ public class DetailedEventActivity extends AppCompatActivity {
         mDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onDeletTap();
+                onDeleteTap();
             }
         });
 
@@ -74,24 +77,30 @@ public class DetailedEventActivity extends AppCompatActivity {
     }
 
     private void onUpdateTap() {
-        Boolean updated = false;
         DialogFragment updateEventDialog = UpdateEventDialog.newInstance(mEvent);
-        updateEventDialog.show(getSupportFragmentManager(), "Update Event");
-        // WHERE THE ON DISMISS LISTENER FOR THE DIALOG FRAGMENT NEEDS TO GO FOR UPDATING THE DISPLAYED EVENT INFO
-        ArrayList<Event> events = Database.getEvents();
-        for (Event event : events) {
-            if (event.getEventID().equals(mEvent.getEventID())) {
-                displayEventInfo(event);
-                break;
+        ((UpdateEventDialog) updateEventDialog).setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                ArrayList<Event> events = Database.getEvents();
+                for (Event event : events) {
+                    if (event.getEventID().equals(mEvent.getEventID())) {
+                        mEvent = event;
+                        displayEventInfo(event);
+                        sendBroadcast(new Intent(UPDATE_EVENT));
+                        break;
+                    }
+                }
             }
-        }
+        });
+        updateEventDialog.show(getSupportFragmentManager(), "Update Event");
+
     }
 
-    private void onDeletTap() {
-
+    private void onDeleteTap() {
         DatabaseReference ref = Database.getReference("events");
         ref.child(mEvent.getEventID()).removeValue();
         Toast.makeText(this, "Event deleted!", Toast.LENGTH_SHORT).show();
+        sendBroadcast(new Intent(UPDATE_EVENT));
         finish();
     }
 

@@ -49,6 +49,8 @@ public class UpdateEventDialog extends DialogFragment {
 
     private Event mEvent;
 
+    private DialogInterface.OnDismissListener onDismissListener;
+
     public UpdateEventDialog() {
     }
 
@@ -307,6 +309,18 @@ public class UpdateEventDialog extends DialogFragment {
                 || !mEventStartTimeTextField.getText().toString().trim().equals(event.getEventStartTime())
                 || !mEventEndTimeTextField.getText().toString().trim().equals(event.getEventEndTime())
                 || !mEventTypeSpinner.getSelectedItem().toString().trim().equals(event.getEventType());
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (onDismissListener != null) {
+            onDismissListener.onDismiss(dialog);
+        }
+    }
+
+    public void setOnDismissListener(DialogInterface.OnDismissListener onDismissListener) {
+        this.onDismissListener = onDismissListener;
     }
 
     /**

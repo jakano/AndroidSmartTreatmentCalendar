@@ -39,6 +39,11 @@ public class EventsListAdapter extends ArrayAdapter<Event> {
     }
 
     @Override
+    public int getCount() {
+        return mEvents.size();
+    }
+
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
         if (convertView == null) {

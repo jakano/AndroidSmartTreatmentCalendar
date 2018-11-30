@@ -47,6 +47,7 @@ public class WeekViewFragment extends Fragment {
     private String mParam2;
 
     private WeekView mSevenDayWeekView;
+    private BroadcastReceiver mReceiver;
 
     private OnFragmentInteractionListener mListener;
 
@@ -94,7 +95,7 @@ public class WeekViewFragment extends Fragment {
         });
         setupDateTimeInterpreter();
 
-        BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (UPDATE_EVENT.equals(intent.getAction())) {
@@ -103,8 +104,7 @@ public class WeekViewFragment extends Fragment {
                 }
             }
         };
-        IntentFilter filter = new IntentFilter(UPDATE_EVENT);
-        getContext().registerReceiver(mReceiver, filter);
+
         return view;
     }
 
@@ -146,6 +146,8 @@ public class WeekViewFragment extends Fragment {
                 weekViewEvents.add(weekViewEvent);
             }
         }
+        IntentFilter filter = new IntentFilter(UPDATE_EVENT);
+        getContext().registerReceiver(mReceiver, filter);
         return  weekViewEvents;
     }
 
@@ -153,6 +155,19 @@ public class WeekViewFragment extends Fragment {
         Intent intent = new Intent(getActivity(), DetailedEventActivity.class);
         intent.putExtra("event", event);
         startActivity(intent);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter(UPDATE_EVENT);
+        getContext().registerReceiver(mReceiver, filter);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getContext().unregisterReceiver(mReceiver);
     }
 
     @Override

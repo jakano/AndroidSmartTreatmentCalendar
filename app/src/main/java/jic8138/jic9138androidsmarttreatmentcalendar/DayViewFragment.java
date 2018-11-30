@@ -37,6 +37,7 @@ public class DayViewFragment extends Fragment {
 
     private ArrayList<Event> mEvents;
 
+    private BroadcastReceiver mReceiver;
     private WeekView mOneDayView;
 
     private OnFragmentInteractionListener mListener;
@@ -81,7 +82,7 @@ public class DayViewFragment extends Fragment {
                 goToDetailedEventActivity(tappedEvent);
             }
         });
-        BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (UPDATE_EVENT.equals(intent.getAction())) {
@@ -92,6 +93,7 @@ public class DayViewFragment extends Fragment {
         };
         IntentFilter filter = new IntentFilter(UPDATE_EVENT);
         getContext().registerReceiver(mReceiver, filter);
+
         return view;
     }
 
@@ -99,6 +101,19 @@ public class DayViewFragment extends Fragment {
         Intent intent = new Intent(getActivity(), DetailedEventActivity.class);
         intent.putExtra("event", event);
         startActivity(intent);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter(UPDATE_EVENT);
+        getContext().registerReceiver(mReceiver, filter);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getContext().unregisterReceiver(mReceiver);
     }
 
     @Override

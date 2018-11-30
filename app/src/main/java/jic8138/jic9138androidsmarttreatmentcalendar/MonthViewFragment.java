@@ -38,6 +38,7 @@ public class MonthViewFragment extends Fragment {
     private final static String UPDATE_EVENT = "update_events";
 
     private ArrayList<Event> mEvents;
+    private int mSelectedDay;
 
     private CalendarView mCalendar;
     private ListView mEventsListView;
@@ -45,6 +46,7 @@ public class MonthViewFragment extends Fragment {
     private TextView mEmptyListTextView;
 
     private OnFragmentInteractionListener mListener;
+    private BroadcastReceiver mReceiver;
 
     public MonthViewFragment() {
         // Required empty public constructor
@@ -81,13 +83,13 @@ public class MonthViewFragment extends Fragment {
         mCalendar.setOnDayClickListener(new OnDayClickListener() {
             @Override
             public void onDayClick(EventDay eventDay) {
-                int day = eventDay.getCalendar().get(Calendar.DAY_OF_MONTH);
+                mSelectedDay = eventDay.getCalendar().get(Calendar.DAY_OF_MONTH);
 
-                updateEventList(day);
+                updateEventList(mSelectedDay);
             }
         });
 
-        BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (UPDATE_EVENT.equals(intent.getAction())) {
@@ -146,8 +148,16 @@ public class MonthViewFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        IntentFilter filter = new IntentFilter(UPDATE_EVENT);
+        getContext().registerReceiver(mReceiver, filter);
+
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        getContext().unregisterReceiver(mReceiver);
+    }
 
     public void updateCalendar() {
         List<EventDay> events = new ArrayList<>();
@@ -159,6 +169,7 @@ public class MonthViewFragment extends Fragment {
 
         //Set Events of Calendar
         mCalendar.setEvents(events);
+        updateEventList(mSelectedDay);
     }
 
     /**

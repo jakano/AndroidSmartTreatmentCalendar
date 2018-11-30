@@ -8,16 +8,16 @@ import android.widget.Button;
 
 public class HomeScreenActivity extends AppCompatActivity {
 
-    private Button mLoginButton;
-    private Button mRegistrationButton;
+    public static HomeScreenActivity instance = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance = this;
         setContentView(R.layout.home_screen);
 
-        mLoginButton = findViewById(R.id.homescreen_login_button);
-        mRegistrationButton = findViewById(R.id.homescreen_register_button);
+        Button mLoginButton = findViewById(R.id.homescreen_login_button);
+        Button mRegistrationButton = findViewById(R.id.homescreen_register_button);
 
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -32,6 +32,12 @@ public class HomeScreenActivity extends AppCompatActivity {
                 onRegisterButtonTap();
             }
         });
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        instance = null;
     }
 
     private void onLoginButtonTap() {
