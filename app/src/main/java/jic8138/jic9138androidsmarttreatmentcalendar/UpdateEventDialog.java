@@ -1,5 +1,6 @@
 package jic8138.jic9138androidsmarttreatmentcalendar;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -300,11 +301,12 @@ public class UpdateEventDialog extends DialogFragment {
      * @return true of any of the fields have changed, false otherwise.
      */
     private boolean isUpdated(Event event) {
-        return !mEventNameTextField.getText().toString().equals(event.getEventName())
-                || !mEventStartDayTextField.getText().toString().equals(event.getEventStartDay())
-                || !mEventEndDayTextField.getText().toString().equals(event.getEventEndDay())
-                || !mEventStartTimeTextField.getText().toString().equals(event.getEventStartTime())
-                || !mEventEndTimeTextField.getText().toString().equals(event.getEventEndTime());
+        return !mEventNameTextField.getText().toString().trim().equals(event.getEventName())
+                || !mEventStartDayTextField.getText().toString().trim().equals(event.getEventStartDay())
+                || !mEventEndDayTextField.getText().toString().trim().equals(event.getEventEndDay())
+                || !mEventStartTimeTextField.getText().toString().trim().equals(event.getEventStartTime())
+                || !mEventEndTimeTextField.getText().toString().trim().equals(event.getEventEndTime())
+                || !mEventTypeSpinner.getSelectedItem().toString().trim().equals(event.getEventType());
     }
 
     /**
@@ -319,16 +321,19 @@ public class UpdateEventDialog extends DialogFragment {
         String eventEndDay = mEventEndDayTextField.getText().toString().trim();
         String eventEndTime = mEventEndTimeTextField.getText().toString().trim();
         String eventType = mEventTypeSpinner.getSelectedItem().toString().trim();
+        String eventID = mEvent.getEventID();
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String eventUser = user.getUid();
 
-        DatabaseReference ref = Database.getReference("events").push();
-        String eventID = ref.getKey();
+        DatabaseReference ref = Database.getReference("events").child(eventID);
         Event e = new Event(eventID, eventName, eventStartDay, eventStartTime, eventEndDay, eventEndTime, eventType, eventUser);
         ref.setValue(e.toMap());
 
-        Toast.makeText(getActivity(), "Event created!", Toast.LENGTH_SHORT).show();
-        dialog.dismiss();
+        Toast.makeText(getActivity(), "Event updated!", Toast.LENGTH_SHORT).show();
+        //dialog.dismiss();
+//        ((Activity) getContext()).finish();
+//        startActivity(((Activity) getContext()).getIntent());
+
     }
 }

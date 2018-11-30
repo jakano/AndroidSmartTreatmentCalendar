@@ -16,6 +16,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 import jic8138.jic9138androidsmarttreatmentcalendar.Controllers.Database;
 
 public class DetailedEventActivity extends AppCompatActivity {
@@ -47,7 +49,7 @@ public class DetailedEventActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mEvent = intent.getParcelableExtra("event");
 
-        displayEventInfo();
+        displayEventInfo(mEvent);
 
         mUpdateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,12 +74,21 @@ public class DetailedEventActivity extends AppCompatActivity {
     }
 
     private void onUpdateTap() {
+        Boolean updated = false;
         DialogFragment updateEventDialog = UpdateEventDialog.newInstance(mEvent);
         updateEventDialog.show(getSupportFragmentManager(), "Update Event");
+        // WHERE THE ON DISMISS LISTENER FOR THE DIALOG FRAGMENT NEEDS TO GO FOR UPDATING THE DISPLAYED EVENT INFO
+        ArrayList<Event> events = Database.getEvents();
+        for (Event event : events) {
+            if (event.getEventID().equals(mEvent.getEventID())) {
+                displayEventInfo(event);
+                break;
+            }
+        }
     }
 
     private void onDeletTap() {
-        //TODO: Add Delete Event database logic
+
         DatabaseReference ref = Database.getReference("events");
         ref.child(mEvent.getEventID()).removeValue();
         Toast.makeText(this, "Event deleted!", Toast.LENGTH_SHORT).show();
@@ -88,19 +99,18 @@ public class DetailedEventActivity extends AppCompatActivity {
         finish();
     }
 
-    private void displayEventInfo() {
-        mTitleTextView.setText(mEvent.getEventName());
+    public void displayEventInfo(Event event) {
+        mTitleTextView.setText(event.getEventName());
 
-        String startDate = String.format("%s, at %s", mEvent.getEventStartDay(), mEvent.getEventStartTime());
+        String startDate = String.format("%s, at %s", event.getEventStartDay(), event.getEventStartTime());
         mStartDateTextView.setText(startDate);
 
-        String endDate = String.format("%s, at %s", mEvent.getEventEndDay(), mEvent.getEventEndTime());
+        String endDate = String.format("%s, at %s", event.getEventEndDay(), event.getEventEndTime());
         mEndDateTextView.setText(endDate);
 
-        //TODO Fix User API call and replace default string with call.
-        String user = "a User";
+
         DatabaseReference ref = Database.getReference("users");
-        ref.child(mEvent.getEventUser()).addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.child(event.getEventUser()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String firstName = "";
@@ -116,7 +126,7 @@ public class DetailedEventActivity extends AppCompatActivity {
 
                 String fullName = firstName + " " + lastName;
                 Log.d("FULLNAME", fullName);
-                String eventTypeDetails = String.format("A %s Event by %s", mEvent.getEventType(), fullName);
+                String eventTypeDetails = String.format("A %s Event by %s", event.getEventType(), fullName);
                 mEventTypeTextView.setText(eventTypeDetails);
             }
 
