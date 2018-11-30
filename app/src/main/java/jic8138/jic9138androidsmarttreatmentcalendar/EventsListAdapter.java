@@ -59,6 +59,12 @@ public class EventsListAdapter extends ArrayAdapter<Event> {
                     currentEvent.getEventStartTime(),
                     currentEvent.getEventEndTime());
             viewHolder.times.setText(time_range);
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    goToDetailedEventActivity(currentEvent);
+                }
+            });
         }
         return convertView;
 

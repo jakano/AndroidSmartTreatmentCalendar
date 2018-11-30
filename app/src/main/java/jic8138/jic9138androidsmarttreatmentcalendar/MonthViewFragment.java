@@ -130,7 +130,7 @@ public class MonthViewFragment extends Fragment {
      */
     private void shouldShowEmptyListTextViey(int size) {
         mEmptyListTextView.setVisibility( size == 0? View.VISIBLE : View.GONE);
-        mEventsListView.setVisibility( size != 0? View.VISIBLE : View.GONE);
+        //mEventsListView.setVisibility( size != 0? View.VISIBLE : View.GONE);
     }
 
     /**
