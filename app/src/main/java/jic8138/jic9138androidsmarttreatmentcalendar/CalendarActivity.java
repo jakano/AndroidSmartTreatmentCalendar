@@ -85,51 +85,6 @@ public class CalendarActivity extends AppCompatActivity {
         transaction.replace(R.id.calendar_view_frame, calendar_fragment);
         transaction.commit();
 
-
-        // initialize the database
-        Database.initialize();
-        // get info on current user
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        // Database ref to /events/
-        DatabaseReference ref = Database.getReference("events");
-        // name of attribute you want to filter event by
-        String attribute = "eventUser";
-        // value the attribute should equal, such as eventUser == currentUser.getUid()
-        String attributeValue = user.getUid();
-
-        // gets the events of specified attribute = attributeValue, whenever the database state changes and adds them
-        ref.orderByChild(attribute).equalTo(attributeValue).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                //Log.d("CREATION", dataSnapshot.getValue().toString());
-                for (DataSnapshot eventData : dataSnapshot.getChildren()) {
-                    Event event = eventData.getValue(Event.class);
-                    // this doesnt work because onDataChange works asynchronously, check saved stackoverflow page for followup
-                    //events.add(event);
-                    Log.d("EVENTIDS", event.getEventID());
-                    e.add(event);
-                }
-                update();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-
-
-        });
-
-        update();
-
-    }
-
-    private void update() {
-        Log.d("EEEE", "" + e.size());
-        // write stuff to display events here, the array list containing all the events is called e
-        // use getters from Event class to retrieve information from each event as string for filtering
-
-
     }
 
     private void onAddEventTap() {

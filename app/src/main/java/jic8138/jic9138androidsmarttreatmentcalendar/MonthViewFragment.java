@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import jic8138.jic9138androidsmarttreatmentcalendar.Controllers.Database;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -54,7 +56,7 @@ public class MonthViewFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mEvents = getArguments().getParcelableArrayList("Events");
+            mEvents = Database.getEvents();
         }
     }
 

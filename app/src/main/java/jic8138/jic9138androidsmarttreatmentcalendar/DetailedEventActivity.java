@@ -4,9 +4,19 @@ import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.FirebaseError;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+
+import jic8138.jic9138androidsmarttreatmentcalendar.Controllers.Database;
 
 public class DetailedEventActivity extends AppCompatActivity {
 
@@ -68,6 +78,10 @@ public class DetailedEventActivity extends AppCompatActivity {
 
     private void onDeletTap() {
         //TODO: Add Delete Event database logic
+        DatabaseReference ref = Database.getReference("events");
+        ref.child(mEvent.getEventID()).removeValue();
+        Toast.makeText(this, "Event deleted!", Toast.LENGTH_SHORT).show();
+        finish();
     }
 
     private void onDismissTap() {
@@ -85,8 +99,35 @@ public class DetailedEventActivity extends AppCompatActivity {
 
         //TODO Fix User API call and replace default string with call.
         String user = "a User";
+        DatabaseReference ref = Database.getReference("users");
+        ref.child(mEvent.getEventUser()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String firstName = "";
+                String lastName = "";
+                for (DataSnapshot userData : dataSnapshot.getChildren()) {
+                    String attributeKey = userData.getKey();
+                    String attributeValue = userData.getValue(String.class);
 
-        String eventTypeDetails = String.format("An %s Event by %s", mEvent.getEventType(), user);
-        mEventTypeTextView.setText(eventTypeDetails);
+                    if (attributeKey == "first") {
+                        firstName = attributeValue;
+                    } else if (attributeKey == "last") {
+                        lastName = attributeValue;
+                    }
+                    Log.d("USERFIRSTLAST", attributeKey + " " + attributeValue);
+                }
+
+                String fullName = firstName + " " + lastName;
+                Log.d("USERFIRSTLAST", fullName);
+                String eventTypeDetails = String.format("A %s Event by %s", mEvent.getEventType(), fullName);
+                mEventTypeTextView.setText(eventTypeDetails);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // ...
+            }
+        });
+
     }
 }

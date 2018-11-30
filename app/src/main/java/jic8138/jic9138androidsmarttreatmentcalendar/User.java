@@ -31,5 +31,11 @@ public class User {
         return result;
     }
 
+    public String getFirst() {
+        return first;
+    }
 
+    public String getLast() {
+        return last;
+    }
 }
