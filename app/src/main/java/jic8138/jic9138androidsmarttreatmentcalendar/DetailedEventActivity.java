@@ -135,7 +135,8 @@ public class DetailedEventActivity extends AppCompatActivity {
 
                 String fullName = firstName + " " + lastName;
                 Log.d("FULLNAME", fullName);
-                String eventTypeDetails = String.format("A %s Event by %s", event.getEventType(), fullName);
+                String article = "Sport".equals(event.getEventType()) ? "A" : "An";
+                String eventTypeDetails = String.format("%s %s event by %s", article, event.getEventType(), fullName);
                 mEventTypeTextView.setText(eventTypeDetails);
             }
 

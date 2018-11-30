@@ -77,8 +77,8 @@ public class MonthViewFragment extends Fragment {
         updateCalendar();
 
         //If the current day of the calendar is already set to a day with events, show list.
-        int firstDay = mCalendar.getFirstSelectedDate().get(Calendar.DAY_OF_MONTH);;
-        updateEventList(firstDay);
+        mSelectedDay = mCalendar.getFirstSelectedDate().get(Calendar.DAY_OF_MONTH);;
+        updateEventList(mSelectedDay);
 
         mCalendar.setOnDayClickListener(new OnDayClickListener() {
             @Override
@@ -169,6 +169,9 @@ public class MonthViewFragment extends Fragment {
 
         //Set Events of Calendar
         mCalendar.setEvents(events);
+        if(mSelectedDay == 0) {
+            mSelectedDay = mCalendar.getFirstSelectedDate().get(Calendar.DAY_OF_MONTH);
+        }
         updateEventList(mSelectedDay);
     }
 

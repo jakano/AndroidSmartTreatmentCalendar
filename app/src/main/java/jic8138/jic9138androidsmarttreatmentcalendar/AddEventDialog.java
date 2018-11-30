@@ -1,9 +1,11 @@
 package jic8138.jic9138androidsmarttreatmentcalendar;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,6 +14,7 @@ import android.support.v4.app.DialogFragment;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -66,7 +69,14 @@ public class AddEventDialog extends DialogFragment {
         setUpDatePickers();
         //Set up EventType Spinner
         setUpSpinner();
-        // Inflate and set the layout for the dialog
+        mEventNameTextField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus) {
+                    hideKeyboardAndCursor();
+                }
+            }
+        });
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(view)
                 .setTitle(R.string.calendar_add_event)
@@ -91,6 +101,16 @@ public class AddEventDialog extends DialogFragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mEventTypeSpinner.setAdapter(adapter);
     }
+
+    /**
+     * Hide keyboard when uses is no longer using the name text field;
+     */
+    private void hideKeyboardAndCursor() {
+        InputMethodManager imm = (InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mEventNameTextField.getWindowToken(), 0);
+        mEventNameTextField.setCursorVisible(false);
+    }
+
     /**
      * Replaces the Start and End DayTextField's input with a DatePicker.
      * Checks if the DatePicker is already showing to account for it showing twice
