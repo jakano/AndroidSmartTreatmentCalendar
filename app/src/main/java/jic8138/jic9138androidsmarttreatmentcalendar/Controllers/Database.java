@@ -45,6 +45,7 @@ public final class Database {
                 }
             };
             initialized = true;
+            events = new ArrayList<>();
             database = FirebaseDatabase.getInstance();
 
             DatabaseReference ref = Database.getReference("events");
@@ -88,6 +89,8 @@ public final class Database {
 
                 }
             });
+
+
         }
     }
 

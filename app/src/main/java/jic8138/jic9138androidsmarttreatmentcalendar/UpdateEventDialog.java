@@ -313,5 +313,22 @@ public class UpdateEventDialog extends DialogFragment {
      */
     private void updateEventOnDatabase(DialogInterface dialog) {
         //TODO: Database implementation
+        String eventName = mEventNameTextField.getText().toString().trim();
+        String eventStartDay = mEventStartDayTextField.getText().toString().trim();
+        String eventStartTime = mEventStartTimeTextField.getText().toString().trim();
+        String eventEndDay = mEventEndDayTextField.getText().toString().trim();
+        String eventEndTime = mEventEndTimeTextField.getText().toString().trim();
+        String eventType = mEventTypeSpinner.getSelectedItem().toString().trim();
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String eventUser = user.getUid();
+
+        DatabaseReference ref = Database.getReference("events").push();
+        String eventID = ref.getKey();
+        Event e = new Event(eventID, eventName, eventStartDay, eventStartTime, eventEndDay, eventEndTime, eventType, eventUser);
+        ref.setValue(e.toMap());
+
+        Toast.makeText(getActivity(), "Event created!", Toast.LENGTH_SHORT).show();
+        dialog.dismiss();
     }
 }

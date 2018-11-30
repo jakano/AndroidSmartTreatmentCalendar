@@ -107,18 +107,15 @@ public class DetailedEventActivity extends AppCompatActivity {
                 String lastName = "";
                 for (DataSnapshot userData : dataSnapshot.getChildren()) {
                     String attributeKey = userData.getKey();
-                    String attributeValue = userData.getValue(String.class);
-
-                    if (attributeKey == "first") {
-                        firstName = attributeValue;
-                    } else if (attributeKey == "last") {
-                        lastName = attributeValue;
+                    if ("first".equals(attributeKey)) {
+                        firstName = userData.getValue(String.class);
+                    } else if ("last".equals(attributeKey)) {
+                        lastName = userData.getValue(String.class);
                     }
-                    Log.d("USERFIRSTLAST", attributeKey + " " + attributeValue);
                 }
 
                 String fullName = firstName + " " + lastName;
-                Log.d("USERFIRSTLAST", fullName);
+                Log.d("FULLNAME", fullName);
                 String eventTypeDetails = String.format("A %s Event by %s", mEvent.getEventType(), fullName);
                 mEventTypeTextView.setText(eventTypeDetails);
             }
