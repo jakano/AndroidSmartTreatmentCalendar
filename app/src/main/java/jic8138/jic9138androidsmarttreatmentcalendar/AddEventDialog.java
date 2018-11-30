@@ -40,6 +40,8 @@ public class AddEventDialog extends DialogFragment {
     private boolean mIsStartDayPickerShowing;
     private boolean mIsEndDayPickerShowing;
 
+    private DialogInterface.OnDismissListener onDismissListener;
+
     public AddEventDialog() {
 
     }
@@ -251,6 +253,18 @@ public class AddEventDialog extends DialogFragment {
                 }
             }
         });
+    }
+
+    public void setOnDismissListener(DialogInterface.OnDismissListener onDismissListener) {
+        this.onDismissListener = onDismissListener;
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if (onDismissListener != null) {
+            onDismissListener.onDismiss(dialog);
+        }
     }
 
     /**

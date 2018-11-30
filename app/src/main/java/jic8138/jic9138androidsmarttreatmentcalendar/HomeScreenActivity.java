@@ -40,8 +40,8 @@ public class HomeScreenActivity extends AppCompatActivity {
     }
 
     private void onRegisterButtonTap() {
-        Intent inent = new Intent(HomeScreenActivity.this, RegistrationActivity.class);
-        startActivity(inent);
+        Intent intent = new Intent(HomeScreenActivity.this, RegistrationActivity.class);
+        startActivity(intent);
 
     }
 }

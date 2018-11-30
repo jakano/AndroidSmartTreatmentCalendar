@@ -1,10 +1,13 @@
 package jic8138.jic9138androidsmarttreatmentcalendar;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -34,10 +37,10 @@ import jic8138.jic9138androidsmarttreatmentcalendar.Controllers.Database;
  * create an instance of this fragment.
  */
 public class WeekViewFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+
+    private final static String UPDATE_EVENT = "update_events";
+    private final static int QUICK_UPDATE = -1;
+
 
     // TODO: Rename and change types of parameters
     private ArrayList<Event> mEvents;
@@ -69,22 +72,7 @@ public class WeekViewFragment extends Fragment {
             @Override
             public List<WeekViewEvent> onMonthChange(int newYear, int newMonth) {
                 // Populate the week view with some events.
-
-                ArrayList<WeekViewEvent> weekViewEvents =  new ArrayList<>();
-                for (int i = 0; i < mEvents.size(); i++) {
-                    //This method is run for the previous, current, and next month.
-                    // We only want to create WeekViewEvent objects on the current month
-                    Event currentEvent = mEvents.get(i);
-                    long weekDayEventID = (long)i;
-                    int eventStartDateMonth = currentEvent.retrieveDateInfo(currentEvent.getEventStartDay())[0];
-                    if(eventStartDateMonth == newMonth - 1) {
-                        WeekViewEvent weekViewEvent = currentEvent.getWeekViewEvent();
-                        weekViewEvent.setColor(getResources().getColor(R.color.buzz_gold));
-                        weekViewEvent.setId(weekDayEventID);
-                        weekViewEvents.add(weekViewEvent);
-                    }
-                }
-                return weekViewEvents;
+                return updateWeekView(newMonth);
             }
         };
 
@@ -105,6 +93,18 @@ public class WeekViewFragment extends Fragment {
             }
         });
         setupDateTimeInterpreter();
+
+        BroadcastReceiver mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (UPDATE_EVENT.equals(intent.getAction())) {
+                    mSevenDayWeekView.notifyDatasetChanged();
+                    updateWeekView(QUICK_UPDATE);
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(UPDATE_EVENT);
+        getContext().registerReceiver(mReceiver, filter);
         return view;
     }
 
@@ -128,6 +128,25 @@ public class WeekViewFragment extends Fragment {
                 return hour > 11 ? (hour - 12) + " PM" : (hour == 0 ? "12 AM" : hour + " AM");
             }
         });
+    }
+
+    private List<WeekViewEvent> updateWeekView(int newMonth) {
+        ArrayList<WeekViewEvent> weekViewEvents =  new ArrayList<>();
+        mEvents = Database.getEvents();
+        for (int i = 0; i < mEvents.size(); i++) {
+            //This method is run for the previous, current, and next month.
+            // We only want to create WeekViewEvent objects on the current month
+            Event currentEvent = mEvents.get(i);
+            long weekDayEventID = (long)i;
+            int eventStartDateMonth = currentEvent.retrieveDateInfo(currentEvent.getEventStartDay())[0];
+            if(newMonth == QUICK_UPDATE ||eventStartDateMonth == newMonth - 1) {
+                WeekViewEvent weekViewEvent = currentEvent.getWeekViewEvent();
+                weekViewEvent.setColor(getResources().getColor(R.color.buzz_gold));
+                weekViewEvent.setId(weekDayEventID);
+                weekViewEvents.add(weekViewEvent);
+            }
+        }
+        return  weekViewEvents;
     }
 
     private void goToDetailedEventActivity(Event event) {

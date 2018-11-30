@@ -1,7 +1,9 @@
 package jic8138.jic9138androidsmarttreatmentcalendar;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -32,6 +34,8 @@ import jic8138.jic9138androidsmarttreatmentcalendar.Controllers.Database;
  * create an instance of this fragment.
  */
 public class MonthViewFragment extends Fragment {
+
+    private final static String UPDATE_EVENT = "update_events";
 
     private ArrayList<Event> mEvents;
 
@@ -68,14 +72,7 @@ public class MonthViewFragment extends Fragment {
         mEventsListView = view.findViewById(R.id.calendar_event_list);
         mEventsListView.setVisibility(View.VISIBLE);
         mEmptyListTextView = view.findViewById(R.id.calendar_no_events);
-        List<EventDay> events = new ArrayList<>();
-
-        for (Event event : mEvents) {
-            events.add(new EventDay(event.getCalendarEvent(), R.drawable.calendar_event_icons));
-        }
-
-        //Set Events of Calendar
-        mCalendar.setEvents(events);
+        updateCalendar();
 
         //If the current day of the calendar is already set to a day with events, show list.
         int firstDay = mCalendar.getFirstSelectedDate().get(Calendar.DAY_OF_MONTH);;
@@ -89,6 +86,17 @@ public class MonthViewFragment extends Fragment {
                 updateEventList(day);
             }
         });
+
+        BroadcastReceiver mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (UPDATE_EVENT.equals(intent.getAction())) {
+                    updateCalendar();
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(UPDATE_EVENT);
+        getContext().registerReceiver(mReceiver, filter);
         return view;
     }
 
@@ -133,6 +141,24 @@ public class MonthViewFragment extends Fragment {
     private void shouldShowEmptyListTextViey(int size) {
         mEmptyListTextView.setVisibility(size == 0? View.VISIBLE : View.GONE);
         mEventsListView.setVisibility( size != 0? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+
+    public void updateCalendar() {
+        List<EventDay> events = new ArrayList<>();
+        mEvents = Database.getEvents();
+
+        for (Event event : mEvents) {
+            events.add(new EventDay(event.getCalendarEvent(), R.drawable.calendar_event_icons));
+        }
+
+        //Set Events of Calendar
+        mCalendar.setEvents(events);
     }
 
     /**

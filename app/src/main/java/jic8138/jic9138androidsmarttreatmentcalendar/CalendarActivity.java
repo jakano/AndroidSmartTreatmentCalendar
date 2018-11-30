@@ -1,5 +1,7 @@
 package jic8138.jic9138androidsmarttreatmentcalendar;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
@@ -31,18 +33,16 @@ import jic8138.jic9138androidsmarttreatmentcalendar.Controllers.Database;
 
 public class CalendarActivity extends AppCompatActivity {
 
+    private final static String UPDATE_EVENT = "update_events";
+
     private FloatingActionButton mAddEventButton;
     private ArrayList<Event> e = new ArrayList<>();
-    private ListView mEventsListView;
-    private EventsListAdapter mEventsListAdapter;
+    private Fragment mCalendarFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.calendar_screen);
-        mEventsListView = findViewById(R.id.calendar_event_list);
-
-
         mAddEventButton = findViewById(R.id.calendar_floating_add_button);
         mAddEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,39 +56,43 @@ public class CalendarActivity extends AppCompatActivity {
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                Fragment calendar_fragment =  null;
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList("Events", e);
                 switch (menuItem.getItemId()) {
                     case R.id.navigation_month:
-                        calendar_fragment = MonthViewFragment.newInstance();
+                        mCalendarFragment = MonthViewFragment.newInstance();
                         break;
                     case R.id.navigation_week:
-                        calendar_fragment = WeekViewFragment.newInstance();
+                        mCalendarFragment = WeekViewFragment.newInstance();
                         break;
                     case R.id.navigation_day:
-                        calendar_fragment = DayViewFragment.newInstance();
+                        mCalendarFragment = DayViewFragment.newInstance();
                         break;
                 }
-                calendar_fragment.setArguments(bundle);
+                mCalendarFragment.setArguments(bundle);
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.calendar_view_frame, calendar_fragment);
+                transaction.replace(R.id.calendar_view_frame, mCalendarFragment);
                 transaction.commit();
                 return true;
             }
         });
 
         //Manually displaying the first fragment - one time only
-        Fragment calendar_fragment =  MonthViewFragment.newInstance();
-        calendar_fragment.setArguments(bundle);
+        mCalendarFragment =  MonthViewFragment.newInstance();
+        mCalendarFragment.setArguments(bundle);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.calendar_view_frame, calendar_fragment);
+        transaction.replace(R.id.calendar_view_frame, mCalendarFragment);
         transaction.commit();
 
     }
 
     private void onAddEventTap() {
         DialogFragment addEventDialog = new AddEventDialog();
+        ((AddEventDialog) addEventDialog).setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                sendBroadcast(new Intent(UPDATE_EVENT));            }
+        });
         addEventDialog.show(getSupportFragmentManager(), "Add Event");
 
     }
