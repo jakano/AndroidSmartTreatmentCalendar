@@ -25,8 +25,7 @@
         android:layout_gravity="end|bottom"
         android:layout_margin="16dp" />
 
-    <android.support.design.widget.BottomNavigationView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.design.widget.BottomNavigationView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/calendar_navigation"
         android:layout_width="match_parent"
