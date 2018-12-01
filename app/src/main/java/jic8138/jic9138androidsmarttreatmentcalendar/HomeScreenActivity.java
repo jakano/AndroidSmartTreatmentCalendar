@@ -27,7 +27,7 @@ public class HomeScreenActivity extends AppCompatActivity {
     private EditText mEmailTextField;
     private EditText mPasswordTextField;
     private ScrollView scrollView;
-
+  
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +60,6 @@ public class HomeScreenActivity extends AppCompatActivity {
     public void finish() {
         super.finish();
         instance = null;
-    }
 
     private void onLoginButtonTap() {
         //TODO: Add database logic for login
