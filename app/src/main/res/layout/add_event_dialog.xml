@@ -61,7 +61,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="time"
             android:hint="Start Time"
             />
     </android.support.design.widget.TextInputLayout>
@@ -76,9 +75,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="time"
             android:hint="End Time"
             />
     </android.support.design.widget.TextInputLayout>
+    <Spinner
+        android:id="@+id/add_event_type_dropdown"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        >
+    </Spinner>
 
 </LinearLayout>

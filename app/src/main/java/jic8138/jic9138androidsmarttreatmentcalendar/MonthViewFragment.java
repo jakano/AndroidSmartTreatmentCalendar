@@ -1,16 +1,28 @@
 package jic8138.jic9138androidsmarttreatmentcalendar;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.applandeo.materialcalendarview.CalendarView;
+import com.applandeo.materialcalendarview.EventDay;
+import com.applandeo.materialcalendarview.listeners.OnDayClickListener;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+
+import jic8138.jic9138androidsmarttreatmentcalendar.Controllers.Database;
 
 
 /**
@@ -22,17 +34,19 @@ import java.util.Calendar;
  * create an instance of this fragment.
  */
 public class MonthViewFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename, change types of, and use parameters
-    private String mParam1;
-    private String mParam2;
+    private final static String UPDATE_EVENT = "update_events";
 
-    CalendarView mCalendar;
+    private ArrayList<Event> mEvents;
+    private int mSelectedDay;
+
+    private CalendarView mCalendar;
+    private ListView mEventsListView;
+    private EventsListAdapter mEventsListAdapter;
+    private TextView mEmptyListTextView;
+
     private OnFragmentInteractionListener mListener;
+    private BroadcastReceiver mReceiver;
 
     public MonthViewFragment() {
         // Required empty public constructor
@@ -41,20 +55,14 @@ public class MonthViewFragment extends Fragment {
 
     public static MonthViewFragment newInstance() {
         MonthViewFragment fragment = new MonthViewFragment();
-        /*Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);*/
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        mEvents = Database.getEvents();
+
     }
 
     @Override
@@ -63,14 +71,108 @@ public class MonthViewFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_month_view, container, false);
         mCalendar = view.findViewById(R.id.calendarView);
+        mEventsListView = view.findViewById(R.id.calendar_event_list);
+        mEventsListView.setVisibility(View.VISIBLE);
+        mEmptyListTextView = view.findViewById(R.id.calendar_no_events);
+        updateCalendar();
+
+        //If the current day of the calendar is already set to a day with events, show list.
+        mSelectedDay = mCalendar.getFirstSelectedDate().get(Calendar.DAY_OF_MONTH);;
+        updateEventList(mSelectedDay);
+
+        mCalendar.setOnDayClickListener(new OnDayClickListener() {
+            @Override
+            public void onDayClick(EventDay eventDay) {
+                mSelectedDay = eventDay.getCalendar().get(Calendar.DAY_OF_MONTH);
+
+                updateEventList(mSelectedDay);
+            }
+        });
+
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (UPDATE_EVENT.equals(intent.getAction())) {
+                    updateCalendar();
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(UPDATE_EVENT);
+        getContext().registerReceiver(mReceiver, filter);
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+    /**
+     * Updates the List of Events with Events on a current day
+     * @param day of which the Events are searched for.
+     */
+    private void updateEventList(int day) {
+        ArrayList<Event> eventsOnDay = getEventsOnDay(day);
+
+        //Display Events in a  list associated with the selected day
+        if(mEventsListAdapter == null) {
+            mEventsListAdapter = new EventsListAdapter(getContext(), eventsOnDay);
+            mEventsListView.setAdapter(mEventsListAdapter);
+
+        } else {
+            mEventsListAdapter.setEvents(eventsOnDay);
         }
+        shouldShowEmptyListTextViey(eventsOnDay.size());
+    }
+
+    /**
+     * Search through all Events to find the Events of a specific day
+     * @param day , the day of the events being searched for.
+     * @return An ArrayList containing the events on a specific day
+     */
+    private ArrayList<Event> getEventsOnDay(int day) {
+        ArrayList<Event> eventsOnDay = new ArrayList<>();
+        for (Event event : mEvents) {
+            int eventDay = event.retrieveDateInfo(event.getEventStartDay())[1];
+            if(eventDay == day) {
+                eventsOnDay.add(event);
+            }
+        }
+        return eventsOnDay;
+    }
+
+    /**
+     * Hide the EventListView if there are no events. Show a message stating there are no evets
+     * @param size, the size of the list of available events.
+     */
+    private void shouldShowEmptyListTextViey(int size) {
+        mEmptyListTextView.setVisibility(size == 0? View.VISIBLE : View.GONE);
+        mEventsListView.setVisibility( size != 0? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter(UPDATE_EVENT);
+        getContext().registerReceiver(mReceiver, filter);
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getContext().unregisterReceiver(mReceiver);
+    }
+
+    public void updateCalendar() {
+        List<EventDay> events = new ArrayList<>();
+        mEvents = Database.getEvents();
+
+        for (Event event : mEvents) {
+            events.add(new EventDay(event.getCalendarEvent(), R.drawable.calendar_event_icons));
+        }
+
+        //Set Events of Calendar
+        mCalendar.setEvents(events);
+        if(mSelectedDay == 0) {
+            mSelectedDay = mCalendar.getFirstSelectedDate().get(Calendar.DAY_OF_MONTH);
+        }
+        updateEventList(mSelectedDay);
     }
 
     /**

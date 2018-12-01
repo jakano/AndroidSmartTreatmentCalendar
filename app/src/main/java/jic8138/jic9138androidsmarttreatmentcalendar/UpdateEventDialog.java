@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,11 +13,11 @@ import android.support.v4.app.DialogFragment;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -30,7 +29,12 @@ import java.util.Calendar;
 
 import jic8138.jic9138androidsmarttreatmentcalendar.Controllers.Database;
 
-public class AddEventDialog extends DialogFragment {
+public class UpdateEventDialog extends DialogFragment {
+
+    private static final int APPOINTMENT = 0;
+    private static final int SPORT = 1;
+
+
     private EditText mEventNameTextField;
     private EditText mEventStartDayTextField;
     private EditText mEventStartTimeTextField;
@@ -43,10 +47,19 @@ public class AddEventDialog extends DialogFragment {
     private boolean mIsStartDayPickerShowing;
     private boolean mIsEndDayPickerShowing;
 
+    private Event mEvent;
+
     private DialogInterface.OnDismissListener onDismissListener;
 
-    public AddEventDialog() {
+    public UpdateEventDialog() {
+    }
 
+    public static UpdateEventDialog newInstance(Event event) {
+        UpdateEventDialog updateEventDialog = new UpdateEventDialog();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("event", event);
+        updateEventDialog.setArguments(bundle);
+        return updateEventDialog;
     }
 
     @NonNull
@@ -64,27 +77,29 @@ public class AddEventDialog extends DialogFragment {
         mEventEndTimeTextField = view.findViewById(R.id.add_event_end_time_input);
         mEventTypeSpinner = view.findViewById(R.id.add_event_type_dropdown);
 
+        //Set up EventType Spinner
+        setUpSpinner();
+
+        if(getArguments() != null) {
+            mEvent = getArguments().getParcelable("event");
+            preFill(mEvent);
+        }
+
         //Set inputs of the Start/End Day/Time textFields to be their respective pickers.
         setUpTimePickers();
         setUpDatePickers();
-        //Set up EventType Spinner
-        setUpSpinner();
-        mEventNameTextField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus) {
-                    hideKeyboardAndCursor();
-                }
-            }
-        });
+
+        // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         builder.setView(view)
-                .setTitle(R.string.calendar_add_event)
+                .setTitle(R.string.calendar_update_event)
                 // Add action buttons
-                .setPositiveButton(R.string.calendar_add_event, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.calendar_update_event, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        addEventToDatabase(dialog);
+                        if(isUpdated(mEvent)) {
+                            updateEventOnDatabase(dialog);
+                        }
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -96,21 +111,11 @@ public class AddEventDialog extends DialogFragment {
     }
 
     private void setUpSpinner() {
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(AddEventDialog.this.getContext(),
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(UpdateEventDialog.this.getContext(),
                 R.array.event_types, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mEventTypeSpinner.setAdapter(adapter);
     }
-
-    /**
-     * Hide keyboard when uses is no longer using the name text field;
-     */
-    private void hideKeyboardAndCursor() {
-        InputMethodManager imm = (InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(mEventNameTextField.getWindowToken(), 0);
-        mEventNameTextField.setCursorVisible(false);
-    }
-
     /**
      * Replaces the Start and End DayTextField's input with a DatePicker.
      * Checks if the DatePicker is already showing to account for it showing twice
@@ -131,16 +136,16 @@ public class AddEventDialog extends DialogFragment {
                     int day = currentDay.get(Calendar.DAY_OF_MONTH);
                     DatePickerDialog datePickerDialog;
                     datePickerDialog = new DatePickerDialog(
-                            AddEventDialog.this.getContext(),
+                            UpdateEventDialog.this.getContext(),
                             new DatePickerDialog.OnDateSetListener() {
-                        @Override
-                        public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int dayOfMonth) {
-                            //Added 1 to month as it s always 1 off.
-                            selectedMonth += 1;
-                            String selectedDate = String.format("%02d/%02d/%02d", selectedMonth, dayOfMonth, selectedYear);
-                            mEventStartDayTextField.setText(selectedDate);
-                        }
-                    }, year, month, day);
+                                @Override
+                                public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int dayOfMonth) {
+                                    //Added 1 to month as it s always 1 off.
+                                    selectedMonth += 1;
+                                    String selectedDate = String.format("%02d/%02d/%02d", selectedMonth, dayOfMonth, selectedYear);
+                                    mEventStartDayTextField.setText(selectedDate);
+                                }
+                            }, year, month, day);
                     datePickerDialog.setTitle("Select Start Time");
 
                     datePickerDialog.show();
@@ -162,7 +167,7 @@ public class AddEventDialog extends DialogFragment {
                     int day = currentDay.get(Calendar.DAY_OF_MONTH);
                     DatePickerDialog datePickerDialog;
                     datePickerDialog = new DatePickerDialog(
-                            AddEventDialog.this.getContext(),
+                            UpdateEventDialog.this.getContext(),
                             new DatePickerDialog.OnDateSetListener() {
                                 @Override
                                 public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int dayOfMonth) {
@@ -201,28 +206,28 @@ public class AddEventDialog extends DialogFragment {
                     int minute = currentTime.get(Calendar.MINUTE);
                     TimePickerDialog timePicker;
                     timePicker = new TimePickerDialog(
-                            AddEventDialog.this.getContext(),
+                            UpdateEventDialog.this.getContext(),
                             new TimePickerDialog.OnTimeSetListener() {
-                        @Override
-                        public void onTimeSet(
-                                TimePicker timePicker,
-                                int selectedHour,
-                                int selectedMinute) {
+                                @Override
+                                public void onTimeSet(
+                                        TimePicker timePicker,
+                                        int selectedHour,
+                                        int selectedMinute) {
 
-                            String auxillary = "AM";
+                                    String auxillary = "AM";
 
-                            if (selectedHour > 12) {
-                                auxillary = "PM";
-                            }
+                                    if (selectedHour > 12) {
+                                        auxillary = "PM";
+                                    }
 
-                            String selectedStartTime = String.format(
-                                    "%02d:%02d %s",
-                                    selectedHour,
-                                    selectedMinute,
-                                    auxillary);
-                            mEventStartTimeTextField.setText(selectedStartTime);
-                        }
-                    }, hour, minute, false);//No 24 hour time
+                                    String selectedStartTime = String.format(
+                                            "%02d:%02d %s",
+                                            selectedHour,
+                                            selectedMinute,
+                                            auxillary);
+                                    mEventStartTimeTextField.setText(selectedStartTime);
+                                }
+                            }, hour, minute, false);//No 24 hour time
                     timePicker.setTitle("Select Start Time");
                     timePicker.show();
                     mEventStartTimeTextField.clearFocus();
@@ -242,28 +247,28 @@ public class AddEventDialog extends DialogFragment {
                     int minute = currentTime.get(Calendar.MINUTE);
                     TimePickerDialog timePicker;
                     timePicker = new TimePickerDialog(
-                            AddEventDialog.this.getContext(),
+                            UpdateEventDialog.this.getContext(),
                             new TimePickerDialog.OnTimeSetListener() {
-                        @Override
-                        public void onTimeSet(
-                                TimePicker timePicker,
-                                int selectedHour,
-                                int selectedMinute) {
+                                @Override
+                                public void onTimeSet(
+                                        TimePicker timePicker,
+                                        int selectedHour,
+                                        int selectedMinute) {
 
-                            String auxillary = "AM";
+                                    String auxillary = "AM";
 
-                            if (selectedHour > 12) {
-                                auxillary = "PM";
-                            }
+                                    if (selectedHour > 12) {
+                                        auxillary = "PM";
+                                    }
 
-                            String selectedEndTime = String.format(
-                                    "%02d:%02d %s",
-                                    selectedHour,
-                                    selectedMinute,
-                                    auxillary);
-                            mEventEndTimeTextField.setText(selectedEndTime);
-                        }
-                    }, hour, minute, false);//No 24 hour time
+                                    String selectedEndTime = String.format(
+                                            "%02d:%02d %s",
+                                            selectedHour,
+                                            selectedMinute,
+                                            auxillary);
+                                    mEventEndTimeTextField.setText(selectedEndTime);
+                                }
+                            }, hour, minute, false);//No 24 hour time
                     timePicker.setTitle("Select Start Time");
 
                     timePicker.show();
@@ -275,8 +280,35 @@ public class AddEventDialog extends DialogFragment {
         });
     }
 
-    public void setOnDismissListener(DialogInterface.OnDismissListener onDismissListener) {
-        this.onDismissListener = onDismissListener;
+    /**
+     * Pre-fills the Dialog with the current events info
+     * @param event, the current event
+     */
+    private void preFill(Event event) {
+        mEventNameTextField.setText(event.getEventName());
+        mEventStartDayTextField.setText(event.getEventStartDay());
+        mEventEndDayTextField.setText(event.getEventEndDay());
+        mEventStartTimeTextField.setText(event.getEventStartTime());
+        mEventEndTimeTextField.setText(event.getEventEndTime());
+        if(mEvent.getEventType().equals("Appointment")) {
+            mEventTypeSpinner.setSelection(APPOINTMENT);
+        } else {
+            mEventTypeSpinner.setSelection(SPORT);
+        }
+    }
+
+    /**
+     * Checks if any of the Event Information has been altered from its pre-fill state.
+     * @param event , Event used to compare the original state of the input fields.
+     * @return true of any of the fields have changed, false otherwise.
+     */
+    private boolean isUpdated(Event event) {
+        return !mEventNameTextField.getText().toString().trim().equals(event.getEventName())
+                || !mEventStartDayTextField.getText().toString().trim().equals(event.getEventStartDay())
+                || !mEventEndDayTextField.getText().toString().trim().equals(event.getEventEndDay())
+                || !mEventStartTimeTextField.getText().toString().trim().equals(event.getEventStartTime())
+                || !mEventEndTimeTextField.getText().toString().trim().equals(event.getEventEndTime())
+                || !mEventTypeSpinner.getSelectedItem().toString().trim().equals(event.getEventType());
     }
 
     @Override
@@ -287,27 +319,35 @@ public class AddEventDialog extends DialogFragment {
         }
     }
 
+    public void setOnDismissListener(DialogInterface.OnDismissListener onDismissListener) {
+        this.onDismissListener = onDismissListener;
+    }
+
     /**
-     * Adds Events to the the Firebase Database.
+     * Update Events to the the Firebase Database.
      * @param dialog interface for dismissing dialogs used to add events to the DB
      */
-    private void addEventToDatabase(DialogInterface dialog) {
+    private void updateEventOnDatabase(DialogInterface dialog) {
+        //TODO: Database implementation
         String eventName = mEventNameTextField.getText().toString().trim();
         String eventStartDay = mEventStartDayTextField.getText().toString().trim();
         String eventStartTime = mEventStartTimeTextField.getText().toString().trim();
         String eventEndDay = mEventEndDayTextField.getText().toString().trim();
         String eventEndTime = mEventEndTimeTextField.getText().toString().trim();
         String eventType = mEventTypeSpinner.getSelectedItem().toString().trim();
+        String eventID = mEvent.getEventID();
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String eventUser = user.getUid();
 
-        DatabaseReference ref = Database.getReference("events").push();
-        String eventID = ref.getKey();
+        DatabaseReference ref = Database.getReference("events").child(eventID);
         Event e = new Event(eventID, eventName, eventStartDay, eventStartTime, eventEndDay, eventEndTime, eventType, eventUser);
         ref.setValue(e.toMap());
 
-        Toast.makeText(getActivity(), "Event created!", Toast.LENGTH_SHORT).show();
-        dialog.dismiss();
+        Toast.makeText(getActivity(), "Event updated!", Toast.LENGTH_SHORT).show();
+        //dialog.dismiss();
+//        ((Activity) getContext()).finish();
+//        startActivity(((Activity) getContext()).getIntent());
+
     }
 }

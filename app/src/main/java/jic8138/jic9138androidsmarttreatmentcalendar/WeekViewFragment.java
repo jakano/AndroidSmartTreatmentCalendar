@@ -1,8 +1,13 @@
 package jic8138.jic9138androidsmarttreatmentcalendar;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -20,6 +25,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import jic8138.jic9138androidsmarttreatmentcalendar.Controllers.Database;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,16 +37,17 @@ import java.util.Locale;
  * create an instance of this fragment.
  */
 public class WeekViewFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+
+    private final static String UPDATE_EVENT = "update_events";
+    private final static int QUICK_UPDATE = -1;
+
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
+    private ArrayList<Event> mEvents;
     private String mParam2;
 
     private WeekView mSevenDayWeekView;
+    private BroadcastReceiver mReceiver;
 
     private OnFragmentInteractionListener mListener;
 
@@ -48,21 +56,13 @@ public class WeekViewFragment extends Fragment {
     }
 
     public static WeekViewFragment newInstance() {
-        WeekViewFragment fragment = new WeekViewFragment();
-        /*Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);*/
-        return fragment;
+        return new WeekViewFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        mEvents = Database.getEvents();
     }
 
     @Override
@@ -73,11 +73,7 @@ public class WeekViewFragment extends Fragment {
             @Override
             public List<WeekViewEvent> onMonthChange(int newYear, int newMonth) {
                 // Populate the week view with some events.
-
-                WeekViewEvent event1 = new WeekViewEvent(2,"yest",2,2,2,2,2,2,2,2,2,2);
-                List<WeekViewEvent> events =new ArrayList<>();
-                events.add(event1);
-                return events;
+                return updateWeekView(newMonth);
             }
         };
 
@@ -89,7 +85,26 @@ public class WeekViewFragment extends Fragment {
         mSevenDayWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics()));
         mSevenDayWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
         mSevenDayWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
+        mSevenDayWeekView.setOnEventClickListener(new WeekView.EventClickListener() {
+            @Override
+            public void onEventClick(WeekViewEvent event, RectF eventRect) {
+                int eventPos = (int)event.getId();
+                Event tappedEvent = mEvents.get(eventPos);
+                goToDetailedEventActivity(tappedEvent);
+            }
+        });
         setupDateTimeInterpreter();
+
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (UPDATE_EVENT.equals(intent.getAction())) {
+                    mSevenDayWeekView.notifyDatasetChanged();
+                    updateWeekView(QUICK_UPDATE);
+                }
+            }
+        };
+
         return view;
     }
 
@@ -113,6 +128,46 @@ public class WeekViewFragment extends Fragment {
                 return hour > 11 ? (hour - 12) + " PM" : (hour == 0 ? "12 AM" : hour + " AM");
             }
         });
+    }
+
+    private List<WeekViewEvent> updateWeekView(int newMonth) {
+        ArrayList<WeekViewEvent> weekViewEvents =  new ArrayList<>();
+        mEvents = Database.getEvents();
+        for (int i = 0; i < mEvents.size(); i++) {
+            //This method is run for the previous, current, and next month.
+            // We only want to create WeekViewEvent objects on the current month
+            Event currentEvent = mEvents.get(i);
+            long weekDayEventID = (long)i;
+            int eventStartDateMonth = currentEvent.retrieveDateInfo(currentEvent.getEventStartDay())[0];
+            if(newMonth == QUICK_UPDATE ||eventStartDateMonth == newMonth - 1) {
+                WeekViewEvent weekViewEvent = currentEvent.getWeekViewEvent();
+                weekViewEvent.setColor(getResources().getColor(R.color.buzz_gold));
+                weekViewEvent.setId(weekDayEventID);
+                weekViewEvents.add(weekViewEvent);
+            }
+        }
+        IntentFilter filter = new IntentFilter(UPDATE_EVENT);
+        getContext().registerReceiver(mReceiver, filter);
+        return  weekViewEvents;
+    }
+
+    private void goToDetailedEventActivity(Event event) {
+        Intent intent = new Intent(getActivity(), DetailedEventActivity.class);
+        intent.putExtra("event", event);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter(UPDATE_EVENT);
+        getContext().registerReceiver(mReceiver, filter);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getContext().unregisterReceiver(mReceiver);
     }
 
     @Override
