@@ -69,15 +69,18 @@ public class CalendarActivity extends AppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
+
                             case R.id.navigation_account:
-                                Intent intent = new Intent(CalendarActivity.this, ProfileActivity.class);
-                                startActivity(intent);
-                                break;
+                                Intent ProfileIntent = new Intent(CalendarActivity.this, ProfileActivity.class);
+                                finish();
+                                startActivity(ProfileIntent);
                             case R.id.navigation_logout:
-                                Intent intent2 = new Intent(CalendarActivity.this, HomeScreenActivity.class);
-                                intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(intent2);
-                                break;
+                                Intent HomescreenIntent = new Intent(CalendarActivity.this, HomeScreenActivity.class);
+                                HomescreenIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                finish();
+                                startActivity(HomescreenIntent);
+                                FirebaseAuth.getInstance().signOut();
+
                         }
                         return true;
                     }

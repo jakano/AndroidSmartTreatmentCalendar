@@ -16,9 +16,11 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseUser;
 
 import jic8138.jic9138androidsmarttreatmentcalendar.Controllers.Database;
 
@@ -56,6 +58,15 @@ public class HomeScreenActivity extends AppCompatActivity {
             }
         });
         Database.initialize();
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // User is signed in (user will be null if not signed in)
+            Intent intent = new Intent(HomeScreenActivity.this, CalendarActivity.class);
+            finish();
+            startActivity(intent);
+
+        }
     }
 
     @Override
@@ -64,7 +75,6 @@ public class HomeScreenActivity extends AppCompatActivity {
         instance = null;
     }
     private void onLoginButtonTap() {
-        //TODO: Add database logic for login
         mEmailTextField = findViewById(R.id.login_email);
         mPasswordTextField = findViewById(R.id.login_password);
         String em_text = mEmailTextField.getText().toString();

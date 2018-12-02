@@ -292,6 +292,8 @@ public class AddEventDialog extends DialogFragment {
      * @param dialog interface for dismissing dialogs used to add events to the DB
      */
     private void addEventToDatabase(DialogInterface dialog) {
+        // check values so they arent empty
+        // check time so start day/time < end day/time
         String eventName = mEventNameTextField.getText().toString().trim();
         String eventStartDay = mEventStartDayTextField.getText().toString().trim();
         String eventStartTime = mEventStartTimeTextField.getText().toString().trim();

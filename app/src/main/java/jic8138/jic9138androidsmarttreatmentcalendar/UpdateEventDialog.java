@@ -328,7 +328,6 @@ public class UpdateEventDialog extends DialogFragment {
      * @param dialog interface for dismissing dialogs used to add events to the DB
      */
     private void updateEventOnDatabase(DialogInterface dialog) {
-        //TODO: Database implementation
         String eventName = mEventNameTextField.getText().toString().trim();
         String eventStartDay = mEventStartDayTextField.getText().toString().trim();
         String eventStartTime = mEventStartTimeTextField.getText().toString().trim();
@@ -345,9 +344,6 @@ public class UpdateEventDialog extends DialogFragment {
         ref.setValue(e.toMap());
 
         Toast.makeText(getActivity(), "Event updated!", Toast.LENGTH_SHORT).show();
-        //dialog.dismiss();
-//        ((Activity) getContext()).finish();
-//        startActivity(((Activity) getContext()).getIntent());
 
     }
 }

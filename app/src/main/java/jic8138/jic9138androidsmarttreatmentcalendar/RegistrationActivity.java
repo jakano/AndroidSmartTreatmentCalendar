@@ -56,7 +56,6 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     private void onRegisterButtonTap() {
-        //TODO: Database implementation
         mFirstNameTextField = findViewById(R.id.reg_first_name_textfield);
         mLastnameTextField = findViewById(R.id.reg_last_name_textfield);
         mEmailTextField = findViewById(R.id.reg_email_textfield);
@@ -70,37 +69,67 @@ public class RegistrationActivity extends AppCompatActivity {
         String gtid_text = mGTIDTextField.getText().toString();
         String ps_text = mPasswordTextField.getText().toString();
         String cps_text = mConfirmPasswordTextField.getText().toString();
+
+        Boolean validCredentials = true;
+
         View focusView = null;
         if (TextUtils.isEmpty(fn_text)){
             mFirstNameTextField.setError("You must enter a first name");
             focusView = mFirstNameTextField;
             focusView.requestFocus();
+            validCredentials = false;
         }
         if (TextUtils.isEmpty(ln_text)) {
             mLastnameTextField.setError("You must enter a last name");
             focusView = mLastnameTextField;
             focusView.requestFocus();
+            validCredentials = false;
         }
         if (TextUtils.isEmpty(em_text)){
             mEmailTextField.setError("You must enter an email");
             focusView = mEmailTextField;
             focusView.requestFocus();
+            validCredentials = false;
         }
         if (TextUtils.isEmpty(gtid_text)) {
-            mGTIDTextField.setError("You must enter a gtid");
+            mGTIDTextField.setError("You must enter a GTID");
             focusView = mGTIDTextField;
             focusView.requestFocus();
-        }
-        if (TextUtils.isEmpty(ps_text)) {
-            mPasswordTextField.setError("You must enter a password");
-            focusView = mPasswordTextField;
+            validCredentials = false;
+        } else if (gtid_text.length() != 9) {
+            mGTIDTextField.setError("Valid GTID must be exactly 9 digits");
+            focusView = mGTIDTextField;
             focusView.requestFocus();
+            validCredentials = false;
         }
         if (TextUtils.isEmpty(cps_text)) {
             mConfirmPasswordTextField.setError("You must confirm password");
             focusView = mConfirmPasswordTextField;
             focusView.requestFocus();
-        } else {
+            validCredentials = false;
+        } else if (!ps_text.equals(cps_text)) {
+            mPasswordTextField.setError("Passwords must match each other");
+            focusView = mPasswordTextField;
+            focusView.requestFocus();
+            mConfirmPasswordTextField.setError("Passwords much match each other");
+            focusView = mConfirmPasswordTextField;
+            focusView.requestFocus();
+            validCredentials = false;
+        }
+        if (TextUtils.isEmpty(ps_text)) {
+            mPasswordTextField.setError("You must enter a password");
+            focusView = mPasswordTextField;
+            focusView.requestFocus();
+            validCredentials = false;
+        } else if (ps_text.trim().length() < 6) {
+            mPasswordTextField.setError("Password must have atleast 6 characters");
+            focusView = mPasswordTextField;
+            focusView.requestFocus();
+            validCredentials = false;
+        }
+
+
+        if (validCredentials) {
             String email = mEmailTextField.getText().toString().trim();
             String password = mPasswordTextField.getText().toString().trim();
             String gtid = mGTIDTextField.getText().toString().trim();
@@ -142,7 +171,7 @@ public class RegistrationActivity extends AppCompatActivity {
                         User u = new User(gtid, email, first, last);
                         ref.child(user.getUid()).setValue(u.toMap());
                         // changes to Login page
-                        Intent intent = new Intent(RegistrationActivity.this, LoginActivity.class);
+                        Intent intent = new Intent(RegistrationActivity.this, HomeScreenActivity.class);
                         finish();
                         startActivity(intent);
                     }
