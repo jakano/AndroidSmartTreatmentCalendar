@@ -4,10 +4,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,11 +44,18 @@ public class CalendarActivity extends AppCompatActivity {
     private FloatingActionButton mAddEventButton;
     private ArrayList<Event> e = new ArrayList<>();
     private Fragment mCalendarFragment;
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle toggler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.calendar_screen);
+        setContentView(R.layout.drawer_layout);
+        mDrawerLayout = findViewById(R.id.dl);
+        toggler = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
+        mDrawerLayout.addDrawerListener(toggler);
+        toggler.syncState();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mAddEventButton = findViewById(R.id.calendar_floating_add_button);
         mAddEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,6 +63,23 @@ public class CalendarActivity extends AppCompatActivity {
                 onAddEventTap();
             }
         });
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        switch (menuItem.getItemId()) {
+
+                            case R.id.navigation_account:
+                                break;
+                            case R.id.navigation_logout:
+                                Intent intent = new Intent(CalendarActivity.this, HomeScreenActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                        }
+                        return true;
+                    }
+                });
         BottomNavigationView bottomNavigationView = findViewById(R.id.calendar_navigation);
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList("Events", e);
@@ -96,6 +126,24 @@ public class CalendarActivity extends AppCompatActivity {
         });
         addEventDialog.show(getSupportFragmentManager(), "Add Event");
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

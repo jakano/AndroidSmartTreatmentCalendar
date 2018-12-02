@@ -2,6 +2,7 @@ package jic8138.jic9138androidsmarttreatmentcalendar;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -27,6 +28,7 @@ public class HomeScreenActivity extends AppCompatActivity {
     private EditText mEmailTextField;
     private EditText mPasswordTextField;
     private ScrollView scrollView;
+
   
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +62,7 @@ public class HomeScreenActivity extends AppCompatActivity {
     public void finish() {
         super.finish();
         instance = null;
-
+    }
     private void onLoginButtonTap() {
         //TODO: Add database logic for login
         mEmailTextField = findViewById(R.id.login_email);
