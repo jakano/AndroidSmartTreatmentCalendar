@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HomeScreenActivity">
+
+
+    <TextView
+        android:id="@+id/account_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Account Information"
+        android:textSize="24dp"
+        android:layout_marginLeft="10dp" />
+
+    <TextView
+        android:id="@+id/gtid_text"
+        android:layout_width="40dp"
+        android:layout_height="32dp"
+        android:text="GTID"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="50dp" />
+
+    <TextView
+        android:id="@+id/gtid_actual"
+        android:layout_width="100dp"
+        android:layout_height="32dp"
+        android:text="TextView"
+        android:layout_marginLeft="60dp"
+        android:layout_marginTop="50dp" />
+
+    <TextView
+        android:id="@+id/email_text"
+        android:layout_width="40dp"
+        android:layout_height="32dp"
+        android:text="Email"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="100dp" />
+
+    <TextView
+        android:id="@+id/email_actual"
+        android:layout_width="100dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginTop="100dp" />
+
+    <TextView
+        android:id="@+id/name_text"
+        android:layout_width="40dp"
+        android:layout_height="32dp"
+        android:text="Name"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="150dp" />
+
+    <TextView
+        android:id="@+id/name_actual"
+        android:layout_width="100dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginTop="150dp" />
+
+</RelativeLayout>
