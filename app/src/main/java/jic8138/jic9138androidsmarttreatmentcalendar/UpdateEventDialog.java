@@ -1,6 +1,5 @@
 package jic8138.jic9138androidsmarttreatmentcalendar;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -17,7 +16,6 @@ import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -36,9 +34,8 @@ public class UpdateEventDialog extends DialogFragment {
 
 
     private EditText mEventNameTextField;
-    private EditText mEventStartDayTextField;
+    private EditText mEventDayTextField;
     private EditText mEventStartTimeTextField;
-    private EditText mEventEndDayTextField;
     private EditText mEventEndTimeTextField;
     private Spinner mEventTypeSpinner;
 
@@ -71,9 +68,8 @@ public class UpdateEventDialog extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.add_event_dialog, null);
         mEventNameTextField = view.findViewById(R.id.add_event_name_input);
-        mEventStartDayTextField = view.findViewById(R.id.add_event_start_day_input);
+        mEventDayTextField = view.findViewById(R.id.add_event_start_day_input);
         mEventStartTimeTextField = view.findViewById(R.id.add_event_start_time_input);
-        mEventEndDayTextField = view.findViewById(R.id.add_event_end_day_input);
         mEventEndTimeTextField = view.findViewById(R.id.add_event_end_time_input);
         mEventTypeSpinner = view.findViewById(R.id.add_event_type_dropdown);
 
@@ -122,10 +118,9 @@ public class UpdateEventDialog extends DialogFragment {
      * on devices running Android 4.0
      */
     private void setUpDatePickers() {
-        mEventStartDayTextField.setInputType(InputType.TYPE_NULL);
-        mEventEndDayTextField.setInputType(InputType.TYPE_NULL);
+        mEventDayTextField.setInputType(InputType.TYPE_NULL);
 
-        mEventStartDayTextField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mEventDayTextField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!mIsStartDayPickerShowing) {
@@ -143,46 +138,15 @@ public class UpdateEventDialog extends DialogFragment {
                                     //Added 1 to month as it s always 1 off.
                                     selectedMonth += 1;
                                     String selectedDate = String.format("%02d/%02d/%02d", selectedMonth, dayOfMonth, selectedYear);
-                                    mEventStartDayTextField.setText(selectedDate);
+                                    mEventDayTextField.setText(selectedDate);
                                 }
                             }, year, month, day);
                     datePickerDialog.setTitle("Select Start Time");
 
                     datePickerDialog.show();
-                    mEventStartDayTextField.clearFocus();
+                    mEventDayTextField.clearFocus();
                 } else {
                     mIsStartDayPickerShowing = false;
-                }
-            }
-        });
-
-        mEventEndDayTextField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!mIsEndDayPickerShowing) {
-                    mIsEndDayPickerShowing = true;
-                    Calendar currentDay = Calendar.getInstance();
-                    int year = currentDay.get(Calendar.YEAR);
-                    int month = currentDay.get(Calendar.MONTH);
-                    int day = currentDay.get(Calendar.DAY_OF_MONTH);
-                    DatePickerDialog datePickerDialog;
-                    datePickerDialog = new DatePickerDialog(
-                            UpdateEventDialog.this.getContext(),
-                            new DatePickerDialog.OnDateSetListener() {
-                                @Override
-                                public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int dayOfMonth) {
-                                    //Added 1 to month as it s always 1 off.
-                                    selectedMonth += 1;
-                                    String selectedDate = String.format("%02d/%02d/%02d", selectedMonth, dayOfMonth, selectedYear);
-                                    mEventEndDayTextField.setText(selectedDate);
-                                }
-                            }, year, month, day);
-                    datePickerDialog.setTitle("Select Start Time");
-
-                    datePickerDialog.show();
-                    mEventEndDayTextField.clearFocus();
-                } else {
-                    mIsEndDayPickerShowing = false;
                 }
             }
         });
@@ -286,8 +250,7 @@ public class UpdateEventDialog extends DialogFragment {
      */
     private void preFill(Event event) {
         mEventNameTextField.setText(event.getEventName());
-        mEventStartDayTextField.setText(event.getEventStartDay());
-        mEventEndDayTextField.setText(event.getEventEndDay());
+        mEventDayTextField.setText(event.getEventStartDay());
         mEventStartTimeTextField.setText(event.getEventStartTime());
         mEventEndTimeTextField.setText(event.getEventEndTime());
         if(mEvent.getEventType().equals("Appointment")) {
@@ -304,8 +267,7 @@ public class UpdateEventDialog extends DialogFragment {
      */
     private boolean isUpdated(Event event) {
         return !mEventNameTextField.getText().toString().trim().equals(event.getEventName())
-                || !mEventStartDayTextField.getText().toString().trim().equals(event.getEventStartDay())
-                || !mEventEndDayTextField.getText().toString().trim().equals(event.getEventEndDay())
+                || !mEventDayTextField.getText().toString().trim().equals(event.getEventStartDay())
                 || !mEventStartTimeTextField.getText().toString().trim().equals(event.getEventStartTime())
                 || !mEventEndTimeTextField.getText().toString().trim().equals(event.getEventEndTime())
                 || !mEventTypeSpinner.getSelectedItem().toString().trim().equals(event.getEventType());
@@ -329,9 +291,9 @@ public class UpdateEventDialog extends DialogFragment {
      */
     private void updateEventOnDatabase(DialogInterface dialog) {
         String eventName = mEventNameTextField.getText().toString().trim();
-        String eventStartDay = mEventStartDayTextField.getText().toString().trim();
+        String eventStartDay = mEventDayTextField.getText().toString().trim();
         String eventStartTime = mEventStartTimeTextField.getText().toString().trim();
-        String eventEndDay = mEventEndDayTextField.getText().toString().trim();
+        String eventEndDay = mEventDayTextField.getText().toString().trim();
         String eventEndTime = mEventEndTimeTextField.getText().toString().trim();
         String eventType = mEventTypeSpinner.getSelectedItem().toString().trim();
         String eventID = mEvent.getEventID();

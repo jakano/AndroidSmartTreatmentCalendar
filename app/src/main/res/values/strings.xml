@@ -34,7 +34,7 @@
 
     <!--Event-->
     <string name="event_name_header">Event Name</string>
-    <string name="event_start_day_header">Start Day</string>
+    <string name="event_start_day_header">Day</string>
     <string name="event_end_day_header">End Day</string>
     <string name="event_start_time_header">Start Time</string>
     <string name="event_end_time_header">End Time</string>
