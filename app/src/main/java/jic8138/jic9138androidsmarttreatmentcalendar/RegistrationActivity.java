@@ -96,6 +96,11 @@ public class RegistrationActivity extends AppCompatActivity {
             focusView = mGTIDTextField;
             focusView.requestFocus();
             validCredentials = false;
+        } else if (!gtid_text.matches("[0-9]+")) {
+            mGTIDTextField.setError("Valid GTID must contain only digit values");
+            focusView = mGTIDTextField;
+            focusView.requestFocus();
+            validCredentials = false;
         } else if (gtid_text.length() != 9) {
             mGTIDTextField.setError("Valid GTID must be exactly 9 digits");
             focusView = mGTIDTextField;
@@ -146,7 +151,6 @@ public class RegistrationActivity extends AppCompatActivity {
                     // the auth state listener will be notified and logic to handle the
                     // signed in user can be handled in the listener.
                     Toast toast;
-
 
                     if (!task.isSuccessful()) {
                         toast = Toast.makeText(getApplicationContext(), "Unsuccessful registration ;_;", Toast.LENGTH_SHORT);

@@ -57,7 +57,6 @@ public class CalendarActivity extends AppCompatActivity implements FilterDialogF
                         switch (menuItem.getItemId()) {
                             case R.id.navigation_account:
                                 Intent ProfileIntent = new Intent(CalendarActivity.this, ProfileActivity.class);
-                                finish();
                                 startActivity(ProfileIntent);
                                 break;
                             case R.id.navigation_logout:

@@ -288,11 +288,6 @@ public class AddEventDialog extends DialogFragment {
         String eventEndTime = mEventEndTimeTextField.getText().toString().trim();
         String eventType = mEventTypeSpinner.getSelectedItem().toString().trim();
 
-        String[] startTime = eventStartTime.split(" :");
-        String[] endTime = eventEndTime.split(" :");
-        //Log.d("TIMES", startTime[0] + "+" + startTime[1] + "+" + startTime[2]);
-        //Log.d("TIMES", endTime[0] + "+" + endTime[1] + "+" + endTime[2]);
-
         if (eventName == null || eventName.isEmpty()) {
             isValidEvent = false;
             Toast.makeText(getActivity(), "Event Name is empty", Toast.LENGTH_SHORT).show();
@@ -305,11 +300,48 @@ public class AddEventDialog extends DialogFragment {
         } else if (eventEndTime == null || eventEndTime.isEmpty()) {
             isValidEvent = false;
             Toast.makeText(getActivity(), "Event End Time is empty", Toast.LENGTH_SHORT).show();
+        } else {
+            // parse start time
+            String startHourAndMinute[] = eventStartTime.split(":");
+            int startHour = Integer.parseInt(startHourAndMinute[0]);
+            String pureStartMinute = startHourAndMinute[1].substring(0,2);
+            int startMinute = Integer.parseInt(pureStartMinute);
+            String startAMPM = eventStartTime.substring(6,8);
+            // parse end time
+            String endHourAndMinute[] = eventEndTime.split(":");
+            int endHour = Integer.parseInt(endHourAndMinute[0]);
+            String pureEndMinute = endHourAndMinute[1].substring(0,2);
+            int endMinute = Integer.parseInt(pureEndMinute);
+            String endAMPM = eventEndTime.substring(6,8);
+
+            Log.d("TIMES", startHour + "+" + startMinute + "+" + startAMPM);
+            Log.d("TIMES", endHour + "+" + endMinute + "+" + endAMPM);
+            // check if start time > end time
+            if (startAMPM.equals("PM") && endAMPM.equals("AM")) {
+                isValidEvent = false;
+            } else if (startAMPM.equals("PM") && endAMPM.equals("PM")) {
+                if (startHour > endHour) {
+                    isValidEvent = false;
+                } else if (startHour == endHour) {
+                    if (startMinute > endMinute) {
+                        isValidEvent = false;
+                    }
+                }
+            } else if (startAMPM.equals("AM") && endAMPM.equals("AM")) {
+                if (startHour > endHour) {
+                    isValidEvent = false;
+                } else if (startHour == endHour) {
+                    if (startMinute > endMinute) {
+                        isValidEvent = false;
+                    }
+                }
+            }
+            if (!isValidEvent) {
+                Toast.makeText(getActivity(), "Invalid Start and End Times", Toast.LENGTH_SHORT).show();
+            }
+
+
         }
-//        } else if (eventStartTime < eventEndTime) {
-//            isValidEvent = false;
-//            Toast.makeText(getActivity(), "Event End Time is empty", Toast.LENGTH_SHORT).show();
-//        }
 
         if (isValidEvent) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

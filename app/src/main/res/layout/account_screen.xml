@@ -25,7 +25,7 @@
 
     <TextView
         android:id="@+id/gtid_actual"
-        android:layout_width="100dp"
+        android:layout_width="110dp"
         android:layout_height="32dp"
         android:text="TextView"
         android:layout_marginLeft="60dp"
@@ -41,7 +41,7 @@
 
     <TextView
         android:id="@+id/email_actual"
-        android:layout_width="100dp"
+        android:layout_width="250dp"
         android:layout_height="32dp"
         android:layout_marginLeft="60dp"
         android:layout_marginTop="100dp" />
@@ -56,18 +56,11 @@
 
     <TextView
         android:id="@+id/name_actual"
-        android:layout_width="100dp"
+        android:layout_width="250dp"
         android:layout_height="32dp"
         android:layout_marginLeft="60dp"
         android:layout_marginTop="150dp" />
 
-    <Button
-        android:id="@+id/back_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        android:text="Back" />
+
 
 </RelativeLayout>
