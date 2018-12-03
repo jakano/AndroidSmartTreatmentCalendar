@@ -11,10 +11,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -81,7 +83,7 @@ public class AddEventDialog extends DialogFragment {
                 .setPositiveButton(R.string.calendar_add_event, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        addEventToDatabase(dialog);
+                        // replaced by onResume()
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -89,7 +91,24 @@ public class AddEventDialog extends DialogFragment {
                         dialog.dismiss();
                     }
                 });
+
         return builder.create();
+    }
+
+    @Override
+    public void onResume() {
+        // replaces the original POSITIVE button for add event
+        // thus trying to add an event with wrong credentials doesn't exit the dialog on default
+        super.onResume();
+        AlertDialog dialog = (AlertDialog) getDialog();
+        Button addEventButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        addEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                addEventToDatabase(dialog);
+            }
+        });
     }
 
     private void setUpSpinner() {
@@ -259,6 +278,9 @@ public class AddEventDialog extends DialogFragment {
     private void addEventToDatabase(DialogInterface dialog) {
         // check values so they arent empty
         // check time so start day/time < end day/time
+
+        Boolean isValidEvent = true;
+
         String eventName = mEventNameTextField.getText().toString().trim();
         String eventStartDay = mEventDayTextField.getText().toString().trim();
         String eventStartTime = mEventStartTimeTextField.getText().toString().trim();
@@ -266,15 +288,41 @@ public class AddEventDialog extends DialogFragment {
         String eventEndTime = mEventEndTimeTextField.getText().toString().trim();
         String eventType = mEventTypeSpinner.getSelectedItem().toString().trim();
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String eventUser = user.getUid();
+        String[] startTime = eventStartTime.split(" :");
+        String[] endTime = eventEndTime.split(" :");
+        //Log.d("TIMES", startTime[0] + "+" + startTime[1] + "+" + startTime[2]);
+        //Log.d("TIMES", endTime[0] + "+" + endTime[1] + "+" + endTime[2]);
 
-        DatabaseReference ref = Database.getReference("events").push();
-        String eventID = ref.getKey();
-        Event e = new Event(eventID, eventName, eventStartDay, eventStartTime, eventEndDay, eventEndTime, eventType, eventUser);
-        ref.setValue(e.toMap());
+        if (eventName == null || eventName.isEmpty()) {
+            isValidEvent = false;
+            Toast.makeText(getActivity(), "Event Name is empty", Toast.LENGTH_SHORT).show();
+        } else if (eventStartDay == null || eventStartDay.isEmpty()) {
+            isValidEvent = false;
+            Toast.makeText(getActivity(), "Event Day is empty", Toast.LENGTH_SHORT).show();
+        } else if (eventStartTime == null || eventStartTime.isEmpty()) {
+            isValidEvent = false;
+            Toast.makeText(getActivity(), "Event Start Time is empty", Toast.LENGTH_SHORT).show();
+        } else if (eventEndTime == null || eventEndTime.isEmpty()) {
+            isValidEvent = false;
+            Toast.makeText(getActivity(), "Event End Time is empty", Toast.LENGTH_SHORT).show();
+        }
+//        } else if (eventStartTime < eventEndTime) {
+//            isValidEvent = false;
+//            Toast.makeText(getActivity(), "Event End Time is empty", Toast.LENGTH_SHORT).show();
+//        }
 
-        Toast.makeText(getActivity(), "Event created!", Toast.LENGTH_SHORT).show();
-        dialog.dismiss();
+        if (isValidEvent) {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            String eventUser = user.getUid();
+
+            DatabaseReference ref = Database.getReference("events").push();
+            String eventID = ref.getKey();
+            Event e = new Event(eventID, eventName, eventStartDay, eventStartTime, eventEndDay, eventEndTime, eventType, eventUser);
+            ref.setValue(e.toMap());
+
+            Toast.makeText(getActivity(), "Event created!", Toast.LENGTH_SHORT).show();
+            dialog.dismiss();
+        }
+
     }
 }

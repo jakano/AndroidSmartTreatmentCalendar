@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.firebase.FirebaseError;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -26,6 +27,7 @@ public final class Database {
     public static FirebaseUser currentUser;
     public static boolean initialized = false;
     private static ArrayList<Event> events;
+    private static Boolean isFirstTime = true;
 
 
     public static void initialize() {
@@ -49,6 +51,23 @@ public final class Database {
             database = FirebaseDatabase.getInstance();
 
             DatabaseReference ref = Database.getReference("events");
+
+            if (isFirstTime) {
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Long numEvents = dataSnapshot.getChildrenCount();
+                        Log.d("numEvents", numEvents.toString());
+                        isFirstTime = false;
+                        // callback code for after the initial database read
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
 
             ref.addChildEventListener(new ChildEventListener() {
                 @Override
