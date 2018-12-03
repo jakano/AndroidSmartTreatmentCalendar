@@ -76,6 +76,7 @@ public class MonthViewFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_month_view, container, false);
         mCalendar = view.findViewById(R.id.calendarView);
+        mCalendar.setHeaderColor(R.color.tech_gold);
         mEventsListView = view.findViewById(R.id.calendar_event_list);
         mEventsListView.setVisibility(View.VISIBLE);
         mEmptyListTextView = view.findViewById(R.id.calendar_no_events);
