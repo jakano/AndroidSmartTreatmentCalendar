@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="filter_options">
+        <item>@string/filter_appointment</item>
+        <item>@string/filter_sport</item>
+        <item>@string/filter_none</item>
+    </array>
+</resources>

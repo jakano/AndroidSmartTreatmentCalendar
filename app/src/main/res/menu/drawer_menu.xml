@@ -2,22 +2,29 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools ="http://schemas.android.com/tools"
     tools:showIn="nav_view">
-    <item
-        android:id="@+id/navigation_account"
-        android:title="Account"/>
 
-    <item
-        android:id="@+id/navigation_logout"
-        android:title="Logout"/>
+    <item android:title="@string/drawer_menu_account">
+       <menu>
+           <item
+               android:id="@+id/navigation_account"
+               android:title="@string/drawer_account"/>
 
-    <item android:title="Filter Events By Type">
+           <item
+               android:id="@+id/navigation_logout"
+               android:title="@string/drawer_logout"/>
+       </menu>
+    </item>
+
+    <item android:title="@string/drawer_menu_calendar" >
         <menu>
             <item
-                android:id="@+id/by_appointment"
-                android:title="Appointment"/>
-            <item
-                android:id="@+id/by_sport"
-                android:title="Sport"/>
+                android:id="@+id/navigation_filter"
+                android:title="@string/drawer_filter"
+                />
         </menu>
     </item>
+
+
+
+
 </menu>

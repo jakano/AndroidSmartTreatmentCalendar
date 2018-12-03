@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,9 +37,12 @@ import jic8138.jic9138androidsmarttreatmentcalendar.Controllers.Database;
 public class MonthViewFragment extends Fragment {
 
     private final static String UPDATE_EVENT = "update_events";
+    private final static String FILTER_APPLIED = "filter_applied";
+
 
     private ArrayList<Event> mEvents;
     private int mSelectedDay;
+    private String mCurrentFilter;
 
     private CalendarView mCalendar;
     private ListView mEventsListView;
@@ -47,6 +51,7 @@ public class MonthViewFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private BroadcastReceiver mReceiver;
+    private IntentFilter mIntentFilter;
 
     public MonthViewFragment() {
         // Required empty public constructor
@@ -74,7 +79,7 @@ public class MonthViewFragment extends Fragment {
         mEventsListView = view.findViewById(R.id.calendar_event_list);
         mEventsListView.setVisibility(View.VISIBLE);
         mEmptyListTextView = view.findViewById(R.id.calendar_no_events);
-        updateCalendar();
+        updateCalendar(mCurrentFilter);
 
         //If the current day of the calendar is already set to a day with events, show list.
         mSelectedDay = mCalendar.getFirstSelectedDate().get(Calendar.DAY_OF_MONTH);;
@@ -93,12 +98,17 @@ public class MonthViewFragment extends Fragment {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (UPDATE_EVENT.equals(intent.getAction())) {
-                    updateCalendar();
+                    updateCalendar(mCurrentFilter);
+                } else if (FILTER_APPLIED.equals(intent.getAction())) {
+                    mCurrentFilter = intent.getExtras().getString("filter_option");
+                    updateCalendar(mCurrentFilter);
                 }
             }
         };
-        IntentFilter filter = new IntentFilter(UPDATE_EVENT);
-        getContext().registerReceiver(mReceiver, filter);
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(UPDATE_EVENT);
+        mIntentFilter.addAction(FILTER_APPLIED);
+        getContext().registerReceiver(mReceiver, mIntentFilter);
         return view;
     }
 
@@ -107,7 +117,13 @@ public class MonthViewFragment extends Fragment {
      * @param day of which the Events are searched for.
      */
     private void updateEventList(int day) {
-        ArrayList<Event> eventsOnDay = getEventsOnDay(day);
+        ArrayList<Event> eventsOnDay = new ArrayList<>();
+
+        if (mCurrentFilter == null || "None".equals(mCurrentFilter)) {
+            eventsOnDay = getEventsOnDay(day);
+        } else {
+            eventsOnDay = getFilteredEventsOnDay(day, mCurrentFilter);
+        }
 
         //Display Events in a  list associated with the selected day
         if(mEventsListAdapter == null) {
@@ -137,6 +153,23 @@ public class MonthViewFragment extends Fragment {
     }
 
     /**
+     * Search through all Events to find the Events of a specific day that are not included in a
+     * filter
+     * @param day , the day of the events being searched for.
+     * @return An ArrayList containing the events on a specific day
+     */
+    private ArrayList<Event> getFilteredEventsOnDay(int day, String filter) {
+        ArrayList<Event> eventsOnDay = new ArrayList<>();
+        for (Event event : mEvents) {
+            int eventDay = event.retrieveDateInfo(event.getEventStartDay())[1];
+            if(eventDay == day && (filter.equals(event.getEventType()))) {
+                eventsOnDay.add(event);
+            }
+        }
+        return eventsOnDay;
+    }
+
+    /**
      * Hide the EventListView if there are no events. Show a message stating there are no evets
      * @param size, the size of the list of available events.
      */
@@ -148,8 +181,7 @@ public class MonthViewFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        IntentFilter filter = new IntentFilter(UPDATE_EVENT);
-        getContext().registerReceiver(mReceiver, filter);
+        getContext().registerReceiver(mReceiver, mIntentFilter);
 
     }
 
@@ -159,20 +191,38 @@ public class MonthViewFragment extends Fragment {
         getContext().unregisterReceiver(mReceiver);
     }
 
-    public void updateCalendar() {
-        List<EventDay> events = new ArrayList<>();
+    public void updateCalendar(@Nullable String filter) {
         mEvents = Database.getEvents();
-
-        for (Event event : mEvents) {
-            events.add(new EventDay(event.getCalendarEvent(), R.drawable.calendar_event_icons));
+        if(filter != null && !("None".equals(filter))) {
+            mCalendar.setEvents(getFilteredEventDayList(filter));
+        } else {
+            mCalendar.setEvents(getEventDayList());
         }
 
         //Set Events of Calendar
-        mCalendar.setEvents(events);
         if(mSelectedDay == 0) {
             mSelectedDay = mCalendar.getFirstSelectedDate().get(Calendar.DAY_OF_MONTH);
         }
         updateEventList(mSelectedDay);
+    }
+
+    private List<EventDay> getFilteredEventDayList(String filter) {
+        List<EventDay> events = new ArrayList<>();
+        for (Event event : mEvents) {
+            if(filter.equals(event.getEventType())) {
+                events.add(new EventDay(event.getCalendarEvent(), R.drawable.calendar_event_icons));
+            }
+        }
+        return events;
+
+    }
+
+    private List<EventDay> getEventDayList() {
+        List<EventDay> events = new ArrayList<>();
+        for (Event event : mEvents) {
+            events.add(new EventDay(event.getCalendarEvent(), R.drawable.calendar_event_icons));
+        }
+        return events;
     }
 
     /**

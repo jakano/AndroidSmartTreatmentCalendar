@@ -21,9 +21,11 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
-public class CalendarActivity extends AppCompatActivity {
+public class CalendarActivity extends AppCompatActivity implements FilterDialogFragment.FilterDialogListener {
 
     private final static String UPDATE_EVENT = "update_events";
+    private final static String FILTER_APPLIED = "filter_applied";
+
 
     private FloatingActionButton mAddEventButton;
     private ArrayList<Event> e = new ArrayList<>();
@@ -53,7 +55,6 @@ public class CalendarActivity extends AppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
-
                             case R.id.navigation_account:
                                 Intent ProfileIntent = new Intent(CalendarActivity.this, ProfileActivity.class);
                                 finish();
@@ -65,6 +66,11 @@ public class CalendarActivity extends AppCompatActivity {
                                 finish();
                                 startActivity(HomescreenIntent);
                                 FirebaseAuth.getInstance().signOut();
+                                break;
+                            case R.id.navigation_filter:
+                                DialogFragment filterDialog = new FilterDialogFragment();
+                                filterDialog.show(getSupportFragmentManager(), "Filter Dialog");
+                                mDrawerLayout.closeDrawers();
                                 break;
                         }
                         return true;
@@ -116,6 +122,13 @@ public class CalendarActivity extends AppCompatActivity {
         });
         addEventDialog.show(getSupportFragmentManager(), "Add Event");
 
+    }
+
+    @Override
+    public void onFilterSelected(String filter) {
+        Intent intent = new Intent(FILTER_APPLIED);
+        intent.putExtra("filter_option", filter);
+        sendBroadcast(intent);
     }
 
     @Override
