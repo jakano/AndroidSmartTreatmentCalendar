@@ -38,18 +38,20 @@ import jic8138.jic9138androidsmarttreatmentcalendar.Controllers.Database;
  */
 public class WeekViewFragment extends Fragment {
 
+    private final static String FILTER_APPLIED = "filter_applied";
     private final static String UPDATE_EVENT = "update_events";
     private final static int QUICK_UPDATE = -1;
+    private static int BUZZ_GOLD = R.color.buzz_gold;
+    private static int BUZZ_BLUE = R.color.buzz_blue;
 
 
-    // TODO: Rename and change types of parameters
     private ArrayList<Event> mEvents;
-    private String mParam2;
+    private String mCurrentFilter;
+    private IntentFilter mIntentFilter;
+
 
     private WeekView mSevenDayWeekView;
     private BroadcastReceiver mReceiver;
-
-    private OnFragmentInteractionListener mListener;
 
     public WeekViewFragment() {
         // Required empty public constructor
@@ -73,7 +75,7 @@ public class WeekViewFragment extends Fragment {
             @Override
             public List<WeekViewEvent> onMonthChange(int newYear, int newMonth) {
                 // Populate the week view with some events.
-                return updateWeekView(newMonth);
+                return updateWeekView(newMonth, mCurrentFilter);
             }
         };
 
@@ -95,12 +97,21 @@ public class WeekViewFragment extends Fragment {
         });
         setupDateTimeInterpreter();
 
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(UPDATE_EVENT);
+        mIntentFilter.addAction(FILTER_APPLIED);
+        getContext().registerReceiver(mReceiver, mIntentFilter);
+
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (UPDATE_EVENT.equals(intent.getAction())) {
                     mSevenDayWeekView.notifyDatasetChanged();
-                    updateWeekView(QUICK_UPDATE);
+                    updateWeekView(QUICK_UPDATE, mCurrentFilter);
+                } else if (FILTER_APPLIED.equals(intent.getAction())) {
+                    mCurrentFilter = intent.getExtras().getString("filter_option");
+                    mSevenDayWeekView.notifyDatasetChanged();
+                    updateWeekView(QUICK_UPDATE, mCurrentFilter);
                 }
             }
         };
@@ -130,24 +141,33 @@ public class WeekViewFragment extends Fragment {
         });
     }
 
-    private List<WeekViewEvent> updateWeekView(int newMonth) {
+    private List<WeekViewEvent> updateWeekView(int newMonth, @Nullable String mCurrentFilter) {
         ArrayList<WeekViewEvent> weekViewEvents =  new ArrayList<>();
         mEvents = Database.getEvents();
         for (int i = 0; i < mEvents.size(); i++) {
             //This method is run for the previous, current, and next month.
             // We only want to create WeekViewEvent objects on the current month
             Event currentEvent = mEvents.get(i);
+            int color = "Sport".equals(currentEvent.getEventType()) ? BUZZ_BLUE : BUZZ_GOLD;
             long weekDayEventID = (long)i;
             int eventStartDateMonth = currentEvent.retrieveDateInfo(currentEvent.getEventStartDay())[0];
-            if(newMonth == QUICK_UPDATE ||eventStartDateMonth == newMonth - 1) {
-                WeekViewEvent weekViewEvent = currentEvent.getWeekViewEvent();
-                weekViewEvent.setColor(getResources().getColor(R.color.buzz_gold));
-                weekViewEvent.setId(weekDayEventID);
-                weekViewEvents.add(weekViewEvent);
+            if(newMonth == QUICK_UPDATE || eventStartDateMonth == newMonth - 1) {
+
+                if (mCurrentFilter != null && !("None".equals(mCurrentFilter))) {
+                    if (currentEvent.getEventType().equals(mCurrentFilter)) {
+                        WeekViewEvent weekViewEvent = currentEvent.getWeekViewEvent();
+                        weekViewEvent.setId(weekDayEventID);
+                        weekViewEvent.setColor(getResources().getColor(color));
+                        weekViewEvents.add(weekViewEvent);
+                    }
+                } else {
+                    WeekViewEvent weekViewEvent = currentEvent.getWeekViewEvent();
+                    weekViewEvent.setColor(getResources().getColor(color));
+                    weekViewEvent.setId(weekDayEventID);
+                    weekViewEvents.add(weekViewEvent);
+                }
             }
         }
-        IntentFilter filter = new IntentFilter(UPDATE_EVENT);
-        getContext().registerReceiver(mReceiver, filter);
         return  weekViewEvents;
     }
 
@@ -160,8 +180,7 @@ public class WeekViewFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        IntentFilter filter = new IntentFilter(UPDATE_EVENT);
-        getContext().registerReceiver(mReceiver, filter);
+        getContext().registerReceiver(mReceiver, mIntentFilter);
     }
 
     @Override
@@ -173,7 +192,6 @@ public class WeekViewFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     /**

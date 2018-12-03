@@ -22,6 +22,14 @@
 
             />
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textStyle="bold"
+            android:textColor="@color/buzz_blue"
+            android:layout_marginRight="5dp"
+            android:text="Events"/>
+
+        <TextView
             android:id="@+id/calendar_no_events"
             android:layout_width="match_parent"
             android:layout_height="0dp"

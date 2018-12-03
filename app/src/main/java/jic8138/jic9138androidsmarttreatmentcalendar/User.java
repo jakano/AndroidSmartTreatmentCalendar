@@ -38,4 +38,12 @@ public class User {
     public String getLast() {
         return last;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getGtid() {
+        return gtid;
+    }
 }

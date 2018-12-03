@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools ="http://schemas.android.com/tools"
+    tools:showIn="nav_view">
+
+    <item android:title="@string/drawer_menu_account">
+       <menu>
+           <item
+               android:id="@+id/navigation_account"
+               android:title="@string/drawer_account"/>
+
+           <item
+               android:id="@+id/navigation_logout"
+               android:title="@string/drawer_logout"/>
+       </menu>
+    </item>
+
+    <item android:title="@string/drawer_menu_calendar" >
+        <menu>
+            <item
+                android:id="@+id/navigation_filter"
+                android:title="@string/drawer_filter"
+                />
+        </menu>
+    </item>
+
+
+
+
+</menu>

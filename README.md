@@ -6,15 +6,15 @@
 This app is a calendar designed specifically for the Georgia Tech Athletic Training room. In it, you can create an account or login to view the public events and appointments involving Athletic Trainers, GT teams, and GT student athletes. You can add, edit, delete, and view the details of these events. You can also filter by appointments or by sport-related options such as sports, games, or practices.
 
 ### New Features:
-  - Login/Register
-  - View Calendar
-  - Add/View/Edit/Delete Events
-  - Month/Week/Day Views
-  - Filtering
+  - Abilty to make an account and log in with it.
+  - View a Calendar with Georgia Tech sport events, or if you're a registered user, sport events and appoinments.
+  - As a regitered user, you can add events that will be available for all users to view.
+  - Events can bee seen in a  month view format, week view format, or day view format.
+  - Events displayed can be filtered by Sport or Apppointment information.
 ### Bug Fixes:
   - No fixes to report, being this is the first version
 ### Known Bugs:
-  - No known bugs
+  - The events displayed do not automatically update when a registered user updates or deletes a specific event.
   
 ## Installation Guide:
 ### On Your Phone

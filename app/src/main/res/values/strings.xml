@@ -8,6 +8,10 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="cancel">Cancel</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="confirm">Confirm</string>
+
 
 
     <!--Login-->
@@ -30,7 +34,7 @@
 
     <!--Event-->
     <string name="event_name_header">Event Name</string>
-    <string name="event_start_day_header">Start Day</string>
+    <string name="event_start_day_header">Day</string>
     <string name="event_end_day_header">End Day</string>
     <string name="event_start_time_header">Start Time</string>
     <string name="event_end_time_header">End Time</string>
@@ -47,6 +51,21 @@
     <string name="detailed_event_dismiss_button">Dismiss</string>
     <string name="detailed_event_from">From:</string>
     <string name="detailed_event_to">To:</string>
+
+    <!--Drawer-->
+    <string name="drawer_account">Account</string>
+    <string name="drawer_filter">Filter</string>
+    <string name="drawer_logout">Logout</string>
+    <string name="drawer_menu_account">Account Settings</string>
+    <string name="drawer_menu_calendar">Calendar Settings</string>
+
+
+    <!--Filter-->
+    <string name="filter_appointment">Appointment</string>
+    <string name="filter_sport">Sport</string>
+    <string name="filter_none">None</string>
+    <string name="filter_dialog_title">Filter By:</string>
+
 
 
     <!-- TODO: Remove or change this placeholder text -->

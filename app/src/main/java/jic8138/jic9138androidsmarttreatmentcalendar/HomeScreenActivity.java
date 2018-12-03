@@ -2,6 +2,7 @@ package jic8138.jic9138androidsmarttreatmentcalendar;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -15,9 +16,11 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseUser;
 
 import jic8138.jic9138androidsmarttreatmentcalendar.Controllers.Database;
 
@@ -27,6 +30,7 @@ public class HomeScreenActivity extends AppCompatActivity {
     private EditText mEmailTextField;
     private EditText mPasswordTextField;
     private ScrollView scrollView;
+
   
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,15 +58,23 @@ public class HomeScreenActivity extends AppCompatActivity {
             }
         });
         Database.initialize();
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // User is signed in (user will be null if not signed in)
+            Intent intent = new Intent(HomeScreenActivity.this, CalendarActivity.class);
+            finish();
+            startActivity(intent);
+
+        }
     }
 
     @Override
     public void finish() {
         super.finish();
         instance = null;
-
+    }
     private void onLoginButtonTap() {
-        //TODO: Add database logic for login
         mEmailTextField = findViewById(R.id.login_email);
         mPasswordTextField = findViewById(R.id.login_password);
         String em_text = mEmailTextField.getText().toString();

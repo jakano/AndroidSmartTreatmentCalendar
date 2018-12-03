@@ -2,17 +2,18 @@ package jic8138.jic9138androidsmarttreatmentcalendar;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 public class EventsListAdapter extends ArrayAdapter<Event> {
+
+    private static int BUZZ_GOLD = R.color.buzz_gold;
+    private static int LIGHTER_BUZZ_BLUE = R.color.lighter_buzz_blue;
 
     private final Context mContext;
 
@@ -58,7 +59,13 @@ public class EventsListAdapter extends ArrayAdapter<Event> {
         }
         if(mEvents.size() != 0 && position < mEvents.size()) {
             Event currentEvent = mEvents.get(position);
-            viewHolder.title.setText(currentEvent.getEventName());
+            String title = String.format(
+                    "%s (%s)",
+                    currentEvent.getEventName(),
+                    currentEvent.getEventType());
+            viewHolder.title.setText(title);
+            int color = "Sport".equals(currentEvent.getEventType()) ? LIGHTER_BUZZ_BLUE : BUZZ_GOLD;
+            viewHolder.title.setTextColor(convertView.getResources().getColor(color));
 
             String time_range = String.format(
                     "From %s to %s",

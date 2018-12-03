@@ -1,6 +1,5 @@
 package jic8138.jic9138androidsmarttreatmentcalendar;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -11,13 +10,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -36,9 +36,8 @@ public class UpdateEventDialog extends DialogFragment {
 
 
     private EditText mEventNameTextField;
-    private EditText mEventStartDayTextField;
+    private EditText mEventDayTextField;
     private EditText mEventStartTimeTextField;
-    private EditText mEventEndDayTextField;
     private EditText mEventEndTimeTextField;
     private Spinner mEventTypeSpinner;
 
@@ -71,9 +70,8 @@ public class UpdateEventDialog extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.add_event_dialog, null);
         mEventNameTextField = view.findViewById(R.id.add_event_name_input);
-        mEventStartDayTextField = view.findViewById(R.id.add_event_start_day_input);
+        mEventDayTextField = view.findViewById(R.id.add_event_start_day_input);
         mEventStartTimeTextField = view.findViewById(R.id.add_event_start_time_input);
-        mEventEndDayTextField = view.findViewById(R.id.add_event_end_day_input);
         mEventEndTimeTextField = view.findViewById(R.id.add_event_end_time_input);
         mEventTypeSpinner = view.findViewById(R.id.add_event_type_dropdown);
 
@@ -97,9 +95,7 @@ public class UpdateEventDialog extends DialogFragment {
                 .setPositiveButton(R.string.calendar_update_event, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        if(isUpdated(mEvent)) {
-                            updateEventOnDatabase(dialog);
-                        }
+                        // replaced by onResume()
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -108,6 +104,26 @@ public class UpdateEventDialog extends DialogFragment {
                     }
                 });
         return builder.create();
+    }
+
+    @Override
+    public void onResume() {
+        // replaces the original POSITIVE button for add event
+        // thus trying to add an event with wrong credentials doesn't exit the dialog on default
+        super.onResume();
+        AlertDialog dialog = (AlertDialog) getDialog();
+        Button addEventButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        addEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isUpdated(mEvent)) {
+                    updateEventOnDatabase(dialog);
+                } else {
+                    Toast.makeText(getActivity(), "No Event details were changed", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
     }
 
     private void setUpSpinner() {
@@ -122,10 +138,9 @@ public class UpdateEventDialog extends DialogFragment {
      * on devices running Android 4.0
      */
     private void setUpDatePickers() {
-        mEventStartDayTextField.setInputType(InputType.TYPE_NULL);
-        mEventEndDayTextField.setInputType(InputType.TYPE_NULL);
+        mEventDayTextField.setInputType(InputType.TYPE_NULL);
 
-        mEventStartDayTextField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mEventDayTextField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!mIsStartDayPickerShowing) {
@@ -143,46 +158,15 @@ public class UpdateEventDialog extends DialogFragment {
                                     //Added 1 to month as it s always 1 off.
                                     selectedMonth += 1;
                                     String selectedDate = String.format("%02d/%02d/%02d", selectedMonth, dayOfMonth, selectedYear);
-                                    mEventStartDayTextField.setText(selectedDate);
+                                    mEventDayTextField.setText(selectedDate);
                                 }
                             }, year, month, day);
                     datePickerDialog.setTitle("Select Start Time");
 
                     datePickerDialog.show();
-                    mEventStartDayTextField.clearFocus();
+                    mEventDayTextField.clearFocus();
                 } else {
                     mIsStartDayPickerShowing = false;
-                }
-            }
-        });
-
-        mEventEndDayTextField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!mIsEndDayPickerShowing) {
-                    mIsEndDayPickerShowing = true;
-                    Calendar currentDay = Calendar.getInstance();
-                    int year = currentDay.get(Calendar.YEAR);
-                    int month = currentDay.get(Calendar.MONTH);
-                    int day = currentDay.get(Calendar.DAY_OF_MONTH);
-                    DatePickerDialog datePickerDialog;
-                    datePickerDialog = new DatePickerDialog(
-                            UpdateEventDialog.this.getContext(),
-                            new DatePickerDialog.OnDateSetListener() {
-                                @Override
-                                public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int dayOfMonth) {
-                                    //Added 1 to month as it s always 1 off.
-                                    selectedMonth += 1;
-                                    String selectedDate = String.format("%02d/%02d/%02d", selectedMonth, dayOfMonth, selectedYear);
-                                    mEventEndDayTextField.setText(selectedDate);
-                                }
-                            }, year, month, day);
-                    datePickerDialog.setTitle("Select Start Time");
-
-                    datePickerDialog.show();
-                    mEventEndDayTextField.clearFocus();
-                } else {
-                    mIsEndDayPickerShowing = false;
                 }
             }
         });
@@ -286,8 +270,7 @@ public class UpdateEventDialog extends DialogFragment {
      */
     private void preFill(Event event) {
         mEventNameTextField.setText(event.getEventName());
-        mEventStartDayTextField.setText(event.getEventStartDay());
-        mEventEndDayTextField.setText(event.getEventEndDay());
+        mEventDayTextField.setText(event.getEventStartDay());
         mEventStartTimeTextField.setText(event.getEventStartTime());
         mEventEndTimeTextField.setText(event.getEventEndTime());
         if(mEvent.getEventType().equals("Appointment")) {
@@ -304,8 +287,7 @@ public class UpdateEventDialog extends DialogFragment {
      */
     private boolean isUpdated(Event event) {
         return !mEventNameTextField.getText().toString().trim().equals(event.getEventName())
-                || !mEventStartDayTextField.getText().toString().trim().equals(event.getEventStartDay())
-                || !mEventEndDayTextField.getText().toString().trim().equals(event.getEventEndDay())
+                || !mEventDayTextField.getText().toString().trim().equals(event.getEventStartDay())
                 || !mEventStartTimeTextField.getText().toString().trim().equals(event.getEventStartTime())
                 || !mEventEndTimeTextField.getText().toString().trim().equals(event.getEventEndTime())
                 || !mEventTypeSpinner.getSelectedItem().toString().trim().equals(event.getEventType());
@@ -328,26 +310,82 @@ public class UpdateEventDialog extends DialogFragment {
      * @param dialog interface for dismissing dialogs used to add events to the DB
      */
     private void updateEventOnDatabase(DialogInterface dialog) {
-        //TODO: Database implementation
         String eventName = mEventNameTextField.getText().toString().trim();
-        String eventStartDay = mEventStartDayTextField.getText().toString().trim();
+        String eventStartDay = mEventDayTextField.getText().toString().trim();
         String eventStartTime = mEventStartTimeTextField.getText().toString().trim();
-        String eventEndDay = mEventEndDayTextField.getText().toString().trim();
+        String eventEndDay = mEventDayTextField.getText().toString().trim();
         String eventEndTime = mEventEndTimeTextField.getText().toString().trim();
         String eventType = mEventTypeSpinner.getSelectedItem().toString().trim();
         String eventID = mEvent.getEventID();
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String eventUser = user.getUid();
+        Boolean isValidEvent = true;
 
-        DatabaseReference ref = Database.getReference("events").child(eventID);
-        Event e = new Event(eventID, eventName, eventStartDay, eventStartTime, eventEndDay, eventEndTime, eventType, eventUser);
-        ref.setValue(e.toMap());
+        if (eventName == null || eventName.isEmpty()) {
+            isValidEvent = false;
+            Toast.makeText(getActivity(), "Event Name is empty", Toast.LENGTH_SHORT).show();
+        } else if (eventStartDay == null || eventStartDay.isEmpty()) {
+            isValidEvent = false;
+            Toast.makeText(getActivity(), "Event Day is empty", Toast.LENGTH_SHORT).show();
+        } else if (eventStartTime == null || eventStartTime.isEmpty()) {
+            isValidEvent = false;
+            Toast.makeText(getActivity(), "Event Start Time is empty", Toast.LENGTH_SHORT).show();
+        } else if (eventEndTime == null || eventEndTime.isEmpty()) {
+            isValidEvent = false;
+            Toast.makeText(getActivity(), "Event End Time is empty", Toast.LENGTH_SHORT).show();
+        } else {
+            // parse start time
+            String startHourAndMinute[] = eventStartTime.split(":");
+            int startHour = Integer.parseInt(startHourAndMinute[0]);
+            String pureStartMinute = startHourAndMinute[1].substring(0,2);
+            int startMinute = Integer.parseInt(pureStartMinute);
+            String startAMPM = eventStartTime.substring(6,8);
+            // parse end time
+            String endHourAndMinute[] = eventEndTime.split(":");
+            int endHour = Integer.parseInt(endHourAndMinute[0]);
+            String pureEndMinute = endHourAndMinute[1].substring(0,2);
+            int endMinute = Integer.parseInt(pureEndMinute);
+            String endAMPM = eventEndTime.substring(6,8);
 
-        Toast.makeText(getActivity(), "Event updated!", Toast.LENGTH_SHORT).show();
-        //dialog.dismiss();
-//        ((Activity) getContext()).finish();
-//        startActivity(((Activity) getContext()).getIntent());
+            Log.d("TIMES", startHour + "+" + startMinute + "+" + startAMPM);
+            Log.d("TIMES", endHour + "+" + endMinute + "+" + endAMPM);
+            // check if start time > end time
+            if (startAMPM.equals("PM") && endAMPM.equals("AM")) {
+                isValidEvent = false;
+            } else if (startAMPM.equals("PM") && endAMPM.equals("PM")) {
+                if (startHour > endHour) {
+                    isValidEvent = false;
+                } else if (startHour == endHour) {
+                    if (startMinute > endMinute) {
+                        isValidEvent = false;
+                    }
+                }
+            } else if (startAMPM.equals("AM") && endAMPM.equals("AM")) {
+                if (startHour > endHour) {
+                    isValidEvent = false;
+                } else if (startHour == endHour) {
+                    if (startMinute > endMinute) {
+                        isValidEvent = false;
+                    }
+                }
+            }
+            if (!isValidEvent) {
+                Toast.makeText(getActivity(), "Invalid Start and End Times", Toast.LENGTH_SHORT).show();
+            }
+
+
+        }
+
+        if (isValidEvent) {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            String eventUser = user.getUid();
+
+            DatabaseReference ref = Database.getReference("events").child(eventID);
+            Event e = new Event(eventID, eventName, eventStartDay, eventStartTime, eventEndDay, eventEndTime, eventType, eventUser);
+            ref.setValue(e.toMap());
+            dialog.dismiss();
+
+            Toast.makeText(getActivity(), "Event updated!", Toast.LENGTH_SHORT).show();
+        }
 
     }
 }
