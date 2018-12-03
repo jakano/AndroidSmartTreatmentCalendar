@@ -157,12 +157,12 @@ public class WeekViewFragment extends Fragment {
                     if (currentEvent.getEventType().equals(mCurrentFilter)) {
                         WeekViewEvent weekViewEvent = currentEvent.getWeekViewEvent();
                         weekViewEvent.setId(weekDayEventID);
-                        weekViewEvent.setColor(color);
+                        weekViewEvent.setColor(getResources().getColor(color));
                         weekViewEvents.add(weekViewEvent);
                     }
                 } else {
                     WeekViewEvent weekViewEvent = currentEvent.getWeekViewEvent();
-                    weekViewEvent.setColor(color);
+                    weekViewEvent.setColor(getResources().getColor(color));
                     weekViewEvent.setId(weekDayEventID);
                     weekViewEvents.add(weekViewEvent);
                 }

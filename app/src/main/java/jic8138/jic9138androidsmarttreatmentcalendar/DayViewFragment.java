@@ -35,6 +35,8 @@ public class DayViewFragment extends Fragment {
     private final static String FILTER_APPLIED = "filter_applied";
     private final static String UPDATE_EVENT = "update_events";
     private final static int QUICK_UPDATE = -1;
+    private static int BUZZ_GOLD = R.color.buzz_gold;
+    private static int BUZZ_BLUE = R.color.buzz_blue;
 
     private ArrayList<Event> mEvents;
     private String mCurrentFilter;
@@ -137,6 +139,7 @@ public class DayViewFragment extends Fragment {
             //This method is run for the previous, current, and next month.
             // We only want to create WeekViewEvent objects on the current month
             Event currentEvent = mEvents.get(i);
+            int color = "Sport".equals(currentEvent.getEventType()) ? BUZZ_BLUE : BUZZ_GOLD;
             long weekDayEventID = (long) i;
             int eventStartDateMonth = currentEvent.retrieveDateInfo(currentEvent.getEventStartDay())[0];
             if (newMonth == QUICK_UPDATE || eventStartDateMonth == newMonth - 1) {
@@ -146,12 +149,14 @@ public class DayViewFragment extends Fragment {
                         WeekViewEvent weekViewEvent = currentEvent.getWeekViewEvent();
                         weekViewEvent.setColor(getResources().getColor(R.color.buzz_gold));
                         weekViewEvent.setId(weekDayEventID);
+                        weekViewEvent.setColor(getResources().getColor(color));
                         weekViewEvents.add(weekViewEvent);
                     }
                 } else {
                     WeekViewEvent weekViewEvent = currentEvent.getWeekViewEvent();
                     weekViewEvent.setColor(getResources().getColor(R.color.buzz_gold));
                     weekViewEvent.setId(weekDayEventID);
+                    weekViewEvent.setColor(getResources().getColor(color));
                     weekViewEvents.add(weekViewEvent);
                 }
             }
